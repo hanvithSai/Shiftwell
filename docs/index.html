@@ -3,252 +3,508 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Shiftwell | Swap Rules prototype</title>
+<title>Shiftwell Swap Rules | clickable prototype</title>
 <style>
-:root{
-  --ink:#1b2430; --muted:#5f6b7a; --line:#dfe4ea; --bg:#f6f7f9; --card:#fff; --accent:#1f4fd8;
-  --auto:#157a55; --auto-bg:#e8f6ef; --mgr:#4b5563; --mgr-bg:#eef0f3;
-  --appr:#a15c07; --appr-bg:#fdf3df; --block:#b42318; --block-bg:#fdecea;
-}
+:root{--ink:#1b2430;--muted:#5f6b7a;--line:#dfe4ea;--bg:#eef1f5;--card:#fff;--accent:#1f4fd8;--accent-bg:#eaf0ff;
+--auto:#157a55;--auto-bg:#e5f5ed;--mgr:#4b5563;--mgr-bg:#eceff3;--appr:#9a5a06;--appr-bg:#fdf1d9;--block:#b42318;--block-bg:#fdeae8}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.5 "Segoe UI",system-ui,-apple-system,sans-serif}
-header{background:#fff;border-bottom:1px solid var(--line);padding:18px 24px}
-.wrap{max-width:1180px;margin:0 auto}
-h1{font-size:20px;margin:0 0 2px}
-header p{margin:0;color:var(--muted);max-width:820px}
-.tabs{display:flex;gap:8px;margin:18px 0 14px;flex-wrap:wrap;align-items:center}
-.tabs span.lbl{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.06em;margin-right:4px}
-.tab{border:1px solid var(--line);background:#fff;border-radius:8px;padding:8px 12px;cursor:pointer;font:inherit;color:var(--ink)}
-.tab small{display:block;color:var(--muted);font-size:11.5px}
-.tab.on{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
-main{display:grid;grid-template-columns:300px 1fr;gap:16px;padding:0 24px 40px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px}
-h2{font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:0 0 12px}
-.rule{padding:10px 0;border-top:1px solid var(--line)}
-.rule:first-of-type{border-top:0;padding-top:0}
-.rule label.t{display:flex;gap:8px;align-items:flex-start;font-weight:600;cursor:pointer}
-.rule .d{color:var(--muted);font-size:12.5px;margin:3px 0 0 24px}
-.rule input[type=number]{width:64px;padding:4px 6px;border:1px solid #c9d0d9;border-radius:6px;font:inherit}
-.reqs{margin:6px 0 0 24px;font-size:12.5px;color:var(--muted)}
-.btn{border:1px solid var(--line);background:#fff;border-radius:8px;padding:7px 11px;font:inherit;cursor:pointer}
-.btn:hover{border-color:#b9c2cd}
-.btn.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
-.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:12px}
-.stat{border-radius:10px;padding:12px;border:1px solid var(--line);background:#fff}
-.stat b{display:block;font-size:26px;line-height:1.1}
-.stat span{font-size:12px;color:var(--muted)}
-.stat.auto{background:var(--auto-bg);border-color:#bfe3d2}.stat.auto b{color:var(--auto)}
-.stat.mgr{background:var(--mgr-bg)}.stat.mgr b{color:var(--mgr)}
-.stat.appr{background:var(--appr-bg);border-color:#f0d9a5}.stat.appr b{color:var(--appr)}
-.stat.block{background:var(--block-bg);border-color:#f3c3be}.stat.block b{color:var(--block)}
-.load{display:flex;align-items:center;gap:14px;margin-bottom:12px}
-.bar{flex:1;height:10px;background:var(--mgr-bg);border-radius:6px;overflow:hidden}
-.bar i{display:block;height:100%;background:var(--accent)}
-.load .n{white-space:nowrap}
-.filters{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap}
-.chip{border:1px solid var(--line);background:#fff;border-radius:99px;padding:3px 10px;font-size:12.5px;cursor:pointer}
-.chip.on{background:var(--ink);color:#fff;border-color:var(--ink)}
-table{width:100%;border-collapse:collapse;font-size:13px}
-th{text-align:left;font-weight:600;color:var(--muted);font-size:12px;padding:6px 8px;border-bottom:1px solid var(--line)}
-td{padding:7px 8px;border-bottom:1px solid #eef1f4;vertical-align:top}
-tr.row{cursor:pointer}tr.row:hover{background:#fafbfc}tr.sel{background:#f2f6ff!important}
-.badge{display:inline-block;padding:2px 8px;border-radius:99px;font-size:12px;font-weight:600;white-space:nowrap}
-.b-auto{background:var(--auto-bg);color:var(--auto)}.b-mgr{background:var(--mgr-bg);color:var(--mgr)}
-.b-appr{background:var(--appr-bg);color:var(--appr)}.b-block{background:var(--block-bg);color:var(--block)}
-.muted{color:var(--muted)}
-.trace{margin-top:12px;display:none}
-.trace.on{display:block}
-.trace h3{margin:0 0 8px;font-size:14px}
-.chk{display:flex;gap:8px;padding:4px 0}
-.dot{width:16px;height:16px;border-radius:50%;flex:none;margin-top:3px;font-size:10px;color:#fff;text-align:center;line-height:16px}
-.d-ok{background:var(--auto)}.d-warn{background:var(--appr)}.d-fail{background:var(--block)}.d-off{background:#aab3bf}
-.audit{margin-top:12px;font-size:12.5px}
-.audit li{margin:2px 0}
-footer{color:var(--muted);font-size:12px;padding:0 24px 28px}
-@media(max-width:900px){main{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}}
+body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.45 "Segoe UI",system-ui,-apple-system,sans-serif}
+button{font:inherit;cursor:pointer}
+.top{background:#fff;border-bottom:1px solid var(--line);padding:10px 20px;display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+.brand{font-weight:700;font-size:16px}.brand span{color:var(--muted);font-weight:400}
+.seg{display:flex;gap:4px;background:var(--bg);padding:3px;border-radius:9px;flex-wrap:wrap}
+.seg button{border:0;background:transparent;padding:6px 12px;border-radius:7px;color:var(--muted)}
+.seg button.on{background:#fff;color:var(--ink);font-weight:600;box-shadow:0 1px 3px #0002}
+.top label{color:var(--muted);font-size:12px;margin-right:6px}
+.top select{padding:5px 8px;border:1px solid var(--line);border-radius:7px;font:inherit;background:#fff}
+.stage{display:grid;grid-template-columns:270px minmax(0,1fr) 270px;gap:18px;padding:18px 20px;max-width:1500px;margin:0 auto;align-items:start}
+.stage.wide{grid-template-columns:minmax(0,1fr) 270px}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px}
+.panel h4{margin:0 0 8px;font-size:11.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}
+.sp{display:inline-block;background:var(--accent-bg);color:var(--accent);font-weight:700;font-size:11px;padding:2px 8px;border-radius:99px}
+.note b{display:block;font-size:14px;margin:6px 0 4px}.note p{margin:4px 0;color:#38424f;font-size:13px}
+.note ul{margin:4px 0 4px 16px;padding:0;font-size:13px;color:#38424f}
+.ev{font-size:12.5px;border-top:1px solid var(--line);padding:7px 0}.ev:first-of-type{border-top:0}
+.ev i{font-style:normal;color:var(--muted);font-size:11px;display:block}
+.ev .ch{display:inline-block;font-size:10.5px;font-weight:700;padding:1px 6px;border-radius:4px;background:var(--mgr-bg);color:var(--mgr);margin-right:4px}
+.empty{color:var(--muted);font-size:12.5px}
+/* phone */
+.phone{width:372px;height:740px;margin:0 auto;border:10px solid #1b2430;border-radius:38px;background:#f6f7f9;display:flex;flex-direction:column;overflow:hidden;position:relative}
+.sbar{height:26px;background:#fff;display:flex;justify-content:space-between;padding:6px 18px 0;font-size:11px;color:var(--muted)}
+.appbar{background:#fff;padding:8px 16px 10px;border-bottom:1px solid var(--line)}
+.appbar h3{margin:0;font-size:17px}.appbar small{color:var(--muted)}
+.back{border:0;background:none;color:var(--accent);padding:0;margin-bottom:2px;font-size:13px}
+.body{flex:1;overflow:auto;padding:12px 14px}
+.nav{display:flex;background:#fff;border-top:1px solid var(--line)}
+.nav button{flex:1;border:0;background:none;padding:9px 0 10px;font-size:12px;color:var(--muted);position:relative}
+.nav button.on{color:var(--accent);font-weight:700}
+.nav .bd{position:absolute;top:4px;margin-left:4px;background:var(--block);color:#fff;border-radius:9px;font-size:10px;padding:0 5px}
+.card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:11px 12px;margin-bottom:10px}
+.card .t{font-weight:600}.card .s{color:var(--muted);font-size:12.5px}
+.row{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.chip{display:inline-block;font-size:11.5px;font-weight:600;padding:2px 8px;border-radius:99px;white-space:nowrap}
+.c-auto{background:var(--auto-bg);color:var(--auto)}.c-mgr{background:var(--mgr-bg);color:var(--mgr)}
+.c-appr{background:var(--appr-bg);color:var(--appr)}.c-block{background:var(--block-bg);color:var(--block)}.c-info{background:var(--accent-bg);color:var(--accent)}
+.btn{border:1px solid var(--line);background:#fff;border-radius:9px;padding:8px 12px;font-weight:600}
+.btn.pri{background:var(--accent);border-color:var(--accent);color:#fff}.btn.ok{background:var(--auto);border-color:var(--auto);color:#fff}
+.btn.bad{color:var(--block);border-color:#f0c2be}.btn.full{width:100%;padding:11px}.btn[disabled]{opacity:.45;cursor:not-allowed}
+.btns{display:flex;gap:8px;margin-top:9px}.btns .btn{flex:1}
+.banner{border-radius:10px;padding:9px 11px;margin-bottom:10px;font-size:13px}
+.ban-warn{background:var(--appr-bg);color:var(--appr)}.ban-bad{background:var(--block-bg);color:var(--block)}.ban-ok{background:var(--auto-bg);color:var(--auto)}
+.pick{display:block;width:100%;text-align:left;background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-bottom:8px}
+.pick.dis{background:#f3f4f6;cursor:not-allowed}.pick:not(.dis):hover{border-color:var(--accent)}
+.sub{font-size:12px;color:var(--muted);margin-top:3px}
+.result{border-radius:14px;padding:16px;text-align:center;margin:6px 0 12px}
+.result b{display:block;font-size:18px}.result .ic{font-size:30px}
+.r-auto{background:var(--auto-bg);color:var(--auto)}.r-mgr{background:var(--mgr-bg);color:var(--mgr)}.r-appr{background:var(--appr-bg);color:var(--appr)}.r-block{background:var(--block-bg);color:var(--block)}.r-wait{background:var(--accent-bg);color:var(--accent)}
+.tl{margin:8px 0 8px 4px}.tl div{position:relative;padding:0 0 12px 22px;border-left:2px solid var(--line);margin-left:6px;font-size:13px}
+.tl div:before{content:"";position:absolute;left:-7px;top:2px;width:12px;height:12px;border-radius:50%;background:#fff;border:2px solid #b8c0cb}
+.tl div.d:before{background:var(--auto);border-color:var(--auto)}.tl div.n:before{background:var(--accent);border-color:var(--accent)}
+.chk{display:flex;gap:8px;padding:4px 0;font-size:13px}.dot{width:16px;height:16px;border-radius:50%;flex:none;margin-top:2px;color:#fff;font-size:10px;line-height:16px;text-align:center}
+.d-ok{background:var(--auto)}.d-warn{background:#c98a0a}.d-fail{background:var(--block)}.d-off{background:#aab3bf}
+.hb{height:8px;border-radius:5px;background:var(--mgr-bg);position:relative;margin:6px 0 2px}
+.hb i{position:absolute;left:0;top:0;bottom:0;border-radius:5px;background:var(--accent)}.hb u{position:absolute;top:-3px;bottom:-3px;width:2px;background:var(--block)}
+.stbtn{border:1px solid var(--line);background:#fff;border-radius:99px;padding:3px 10px;font-size:12px;margin:2px 4px 2px 0}
+.stbtn.on{background:var(--accent-bg);border-color:var(--accent);color:var(--accent);font-weight:600}
+.demo{border:1px dashed #98a4b5;border-radius:10px;padding:8px 10px;font-size:12.5px;color:var(--muted);margin-top:8px}
+/* web */
+.web{background:#fff;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.wbar{background:#e8ebf0;padding:8px 12px;display:flex;gap:6px;align-items:center}
+.wbar i{width:10px;height:10px;border-radius:50%;background:#c3c9d2}.wbar span{margin-left:10px;background:#fff;border-radius:6px;padding:2px 12px;font-size:12px;color:var(--muted);flex:1;max-width:420px}
+.wgrid{display:grid;grid-template-columns:190px 1fr;min-height:640px}
+.side{background:#f7f8fa;border-right:1px solid var(--line);padding:14px 10px}
+.side b{display:block;padding:2px 8px 10px;font-size:15px}
+.side button{display:block;width:100%;text-align:left;border:0;background:none;padding:8px 10px;border-radius:8px;color:var(--muted)}
+.side button.on{background:#fff;color:var(--ink);font-weight:600;box-shadow:0 1px 3px #0001}
+.wm{padding:18px 22px}.wm h2{margin:0 0 3px;font-size:19px}.wm .lead{color:var(--muted);margin:0 0 14px}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+.kpi{border:1px solid var(--line);border-radius:10px;padding:10px 12px}.kpi b{display:block;font-size:24px}.kpi span{font-size:12px;color:var(--muted)}
+.two{display:grid;grid-template-columns:1fr 330px;gap:16px}
+.sec{border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin-bottom:12px}
+.sec h3{margin:0 0 6px;font-size:14px}.sec p.h{margin:0 0 8px;color:var(--muted);font-size:12.5px}
+table{width:100%;border-collapse:collapse;font-size:13px}th{text-align:left;color:var(--muted);font-size:12px;font-weight:600;padding:5px 7px;border-bottom:1px solid var(--line)}
+td{padding:6px 7px;border-bottom:1px solid #eef1f4;vertical-align:top}
+.f{display:flex;gap:10px;align-items:center;margin:6px 0;flex-wrap:wrap}.f label{font-size:13px}
+.f input[type=number],.f select,.f input[type=text],textarea{padding:5px 8px;border:1px solid #c9d0d9;border-radius:7px;font:inherit}
+.f input[type=number]{width:70px}
+.tg{display:flex;gap:8px;align-items:center;font-weight:600;cursor:pointer}
+.impact b{font-size:22px}.imp{display:flex;gap:8px;margin:8px 0;flex-wrap:wrap}.imp div{flex:1;min-width:70px;border-radius:9px;padding:8px;text-align:center}
+.imp span{display:block;font-size:11px}
+.modal{position:fixed;inset:0;background:#0007;display:flex;align-items:center;justify-content:center;z-index:9}
+.modal .box{background:#fff;border-radius:12px;padding:18px;width:420px;max-width:92vw}
+.toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:#1b2430;color:#fff;padding:9px 16px;border-radius:9px;font-size:13px;z-index:10}
+/* spec */
+.spec{max-width:1100px;margin:18px auto;padding:0 20px}
+.spec .panel{margin-bottom:14px}.spec h2{margin:0 0 4px;font-size:18px}.spec h3{margin:14px 0 4px;font-size:14px}
+.flow{display:flex;gap:6px;align-items:stretch;flex-wrap:wrap;margin:10px 0}
+.fb{border:1px solid var(--line);border-radius:9px;padding:8px 10px;background:#fff;font-size:12.5px;flex:1;min-width:130px}.fb b{display:block;font-size:12.5px}
+.fb.eng{background:var(--accent-bg);border-color:#b9c9f5}.ar{align-self:center;color:var(--muted)}
+.spec .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.spec code{background:#f1f3f6;padding:1px 5px;border-radius:4px;font-size:12px}
+@media(max-width:1100px){.stage,.stage.wide{grid-template-columns:1fr}.two{grid-template-columns:1fr}.kpis{grid-template-columns:repeat(2,1fr)}}
 </style>
 </head>
 <body>
-<header><div class="wrap">
-  <h1>Shiftwell Swap Rules <span class="muted" style="font-weight:400">· prototype</span></h1>
-  <p>One rules engine decides every shift assignment. Eligible swaps go through instantly, exceptions go to the right person, and unsafe ones are blocked. Pick a customer, change the rules and watch tonight's queue change.</p>
-</div></header>
-
-<div class="wrap">
-  <div class="tabs" id="tabs"><span class="lbl">Customer</span></div>
+<div class="top">
+  <div class="brand">Shiftwell <span>Swap Rules · clickable prototype</span></div>
+  <div><label>Customer</label><select id="scSel"></select></div>
+  <div class="seg" id="persona"></div>
+  <button class="btn" id="resetBtn" style="margin-left:auto">Reset demo</button>
 </div>
-
-<div class="wrap">
-<main>
-  <section class="card" id="rules">
-    <h2>Rules</h2>
-
-    <div class="rule"><label class="t"><input type="checkbox" id="credGate"> Credential gate</label>
-      <div class="d">Block if a required certificate is missing, or expired on the shift date.</div>
-      <div class="reqs" id="reqs"></div></div>
-
-    <div class="rule"><label class="t"><input type="checkbox" id="trainGate"> Training check</label>
-      <div class="d">If role or station training is not verified, send to the manager.</div></div>
-
-    <div class="rule"><label class="t"><input type="checkbox" id="hoursGate"> Weekly hours cap</label>
-      <div class="d">Projected hours above <input type="number" id="cap" min="20" max="80"> h go to an approver.</div>
-      <div class="d"><label><input type="checkbox" id="approver"> Escalate to regional approver (otherwise to manager)</label></div></div>
-
-    <div class="rule"><label class="t"><input type="checkbox" id="auto"> Auto-approve eligible swaps</label>
-      <div class="d">Everything that passes all checks is approved instantly and logged.</div></div>
-
-    <div style="display:flex;gap:8px;margin-top:6px">
-      <button class="btn" id="reseed">New night's queue</button>
-      <button class="btn" id="today">Today's rules</button>
-    </div>
-    <p class="muted" style="font-size:12px;margin:12px 0 0">"Today's rules" switches everything off: every swap waits for the manager, as in the current product.</p>
-  </section>
-
-  <section>
-    <div class="stats" id="stats"></div>
-    <div class="card" style="margin-bottom:12px">
-      <div class="load"><div><b id="loadTitle"></b><div class="muted" style="font-size:12px" id="loadSub"></div></div>
-        <div class="bar"><i id="loadBar"></i></div><div class="n" id="loadN"></div></div>
-    </div>
-    <div class="card">
-      <div class="filters" id="filters"></div>
-      <table><thead><tr><th>Request</th><th>Role</th><th>Shift</th><th>Projected hrs</th><th>Decision</th><th>Reason</th></tr></thead><tbody id="rows"></tbody></table>
-      <div class="trace card" id="trace"></div>
-      <div class="audit" id="audit"></div>
-    </div>
-  </section>
-</main>
-</div>
-<footer class="wrap">Synthetic data generated in the browser. Nothing here connects to Shiftwell or customer systems. In this model the person taking the shift is checked; a production version checks both sides of a swap.</footer>
+<div id="app"></div>
+<div id="modalRoot"></div>
 
 <script>
-// ---------- scenarios ----------
-const SCEN = {
-  freshbowl:{label:'FreshBowl',sub:'Restaurants · approvals are the problem',
-    roles:{Cook:.45,Server:.4,Dishwasher:.15}, requirements:{},
-    hours:[22,46], shift:[5,9], trained:.9, credIssue:0, date:'2026-11-20',
-    cfg:{credGate:true,trainGate:true,hoursGate:true,cap:48,approver:false,auto:true}},
-  carepoint:{label:'CarePoint Clinics',sub:'Clinics · lapsed certificates',
-    roles:{Nurse:.6,'Clinic assistant':.25,Receptionist:.15},
-    requirements:{Nurse:['BLS','Nursing council registration']},
-    hours:[24,44], shift:[6,10], trained:.95, credIssue:.1, date:'2026-11-20',
-    cfg:{credGate:true,trainGate:true,hoursGate:true,cap:48,approver:false,auto:true}},
-  urbanmart:{label:'UrbanMart',sub:'Retail · overtime is 9% of wage bill',
-    roles:{'Store associate':.7,Cashier:.2,'Stock handler':.1}, requirements:{},
-    hours:[28,44], shift:[6,9], trained:.93, credIssue:0, date:'2026-11-20',
-    cfg:{credGate:true,trainGate:true,hoursGate:true,cap:48,approver:true,auto:true}}
-};
-const TODAY_CFG={credGate:false,trainGate:false,hoursGate:false,cap:48,approver:false,auto:false};
-const FIRST=['Ananya','Ravi','Meera','Karthik','Sana','Imran','Divya','Arjun','Pooja','Naveen','Lakshmi','Farhan','Isha','Rohit','Kavya','Suresh','Neha','Vikram','Tara','Manoj','Anita','Dev','Priya','Sameer','Hema','Aditya','Rekha','Zoya','Gautam','Nisha','Ajay','Bhavna','Irfan','Jaya','Kiran','Lalit','Mona','Nitin','Omkar','Padma'];
-const LAST=['Rao','Nair','Shah','Khan','Reddy','Iyer','Das','Mehta','Pillai','Singh','Verma','Menon','Joshi','Bose','Kulkarni'];
-
-let state={sc:'freshbowl',seed:1,cfg:{...SCEN.freshbowl.cfg},reqs:[],filter:'all',sel:null,audit:[]};
-
-// ---------- data ----------
-function rng(s){return function(){s|=0;s=s+0x6D2B79F5|0;let t=Math.imul(s^s>>>15,1|s);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
-function pick(r,weights){let x=r(),a=0;for(const k in weights){a+=weights[k];if(x<=a)return k}return Object.keys(weights)[0]}
+// =============== data ===============
+const WEEK0='2026-11-23', TODAY='2026-11-20';
+const DAYN=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
 function addDays(d,n){const x=new Date(d+'T00:00:00');x.setDate(x.getDate()+n);return x.toISOString().slice(0,10)}
-function gen(){
-  const S=SCEN[state.sc], r=rng(state.seed*977+state.sc.length*13), out=[];
-  for(let i=0;i<30;i++){
-    const role=pick(r,S.roles), reqList=S.requirements[role]||[];
-    const date=addDays(S.date,Math.floor(r()*6));
-    const creds={};
-    reqList.forEach(n=>{
-      const x=r();
-      if(x<S.credIssue*.55) creds[n]=addDays(date,-Math.ceil(r()*120));      // expired
-      else if(x<S.credIssue*.75) creds[n]=null;                              // missing
-      else if(x<S.credIssue*.75+.12) creds[n]=addDays(date,Math.ceil(r()*28)); // expiring within 30 days
-      else creds[n]=addDays(date,60+Math.floor(r()*500));
-    });
-    const h=Math.round(S.hours[0]+r()*(S.hours[1]-S.hours[0])), len=Math.round(S.shift[0]+r()*(S.shift[1]-S.shift[0]));
-    out.push({id:i+1,from:FIRST[Math.floor(r()*FIRST.length)]+' '+LAST[Math.floor(r()*LAST.length)],
-      to:FIRST[Math.floor(r()*FIRST.length)]+' '+LAST[Math.floor(r()*LAST.length)],
-      role,date,hours:h,len,trained:r()<S.trained,creds,reqList});
-  }
-  return out;
-}
+function dd(a,b){return Math.round((new Date(b+'T00:00:00')-new Date(a+'T00:00:00'))/864e5)}
+const iso=day=>addDays(WEEK0,day);
+const dlabel=day=>DAYN[day]+' '+(23+day>30?23+day-30:23+day)+' Nov';
+const hh=n=>String(n%24).padStart(2,'0')+':00';
 
-// ---------- engine ----------
-function daysBetween(a,b){return Math.round((new Date(b+'T00:00:00')-new Date(a+'T00:00:00'))/86400000)}
-function evaluate(q,cfg){
-  const checks=[];let credFail=false;
-  if(q.reqList.length===0) checks.push({s:cfg.credGate?'ok':'off',t:'Credentials',d:'No certificate required for this role'});
-  q.reqList.forEach(n=>{
-    const c=q.creds[n];
-    if(!cfg.credGate){checks.push({s:'off',t:n,d:'Credential gate is off'});return}
-    if(!c){credFail=true;checks.push({s:'fail',t:n,d:'No record on file. Required for this role'});return}
-    const left=daysBetween(q.date,c);
-    if(left<0){credFail=true;checks.push({s:'fail',t:n,d:'Expired '+(-left)+' days before the shift ('+c+')'});}
-    else if(left<=30) checks.push({s:'warn',t:n,d:'Valid on shift date, expires in '+left+' days. Renewal reminder sent'});
-    else checks.push({s:'ok',t:n,d:'Valid until '+c});
+const SC={
+ freshbowl:{name:'FreshBowl',loc:'FreshBowl · Koramangala',manager:'Rekha Menon',approver:'—',
+  stations:{Cook:['Grill','Fryer','Wok'],Server:['Counter']},catalog:['Food safety certificate'],
+  cfg:{req:{},enforce:'enforce',alert:30,train:true,hours:true,cap:48,esc:'manager',auto:true,override:true},
+  staff:[['Ananya Rao','Cook',['Grill','Wok'],34,{'Food safety certificate':'2027-08-14'}],['Ravi Nair','Cook',['Grill','Fryer'],30,{'Food safety certificate':'2027-03-02'}],
+   ['Meera Shah','Cook',['Wok'],36,{'Food safety certificate':'2027-05-19'}],['Karthik Iyer','Cook',['Grill','Fryer','Wok'],45,{'Food safety certificate':'2027-01-09'}],
+   ['Sana Khan','Server',['Counter'],28,{'Food safety certificate':'2027-06-30'}],['Imran Das','Cook',['Fryer'],32,{'Food safety certificate':'2026-10-12'}],
+   ['Divya Menon','Cook',['Grill'],40,{}],['Arjun Reddy','Cook',['Grill','Wok'],26,{'Food safety certificate':'2027-09-01'}],['Neha Joshi','Server',['Counter'],30,{'Food safety certificate':'2027-02-11'}]],
+  shifts:[[0,0,'Grill',8,18],[0,2,'Wok',8,18],[0,4,'Grill',6,17],[1,1,'Fryer',8,18],[2,3,'Wok',8,18],[3,0,'Grill',8,18],[6,2,'Grill',8,18],[7,5,'Wok',8,12],[4,1,'Counter',6,18],[5,4,'Fryer',8,18]],
+  seed:[[3,7,'Yesterday 21:14'],[4,7,'Yesterday 21:40'],[5,6,'Yesterday 22:05'],[9,3,'Today 08:12'],[8,8,'Today 09:30']]},
+ carepoint:{name:'CarePoint Clinics',loc:'CarePoint · Whitefield Clinic',manager:'Dr. Lata Pillai',approver:'—',
+  stations:{Nurse:['OPD','Procedure room'],Receptionist:['Front desk']},catalog:['BLS','Nursing council registration'],
+  cfg:{req:{Nurse:['BLS','Nursing council registration']},enforce:'enforce',alert:30,train:true,hours:true,cap:48,esc:'manager',auto:true,override:true},
+  staff:[['Ananya Rao','Nurse',['OPD','Procedure room'],32,{'BLS':'2026-12-02','Nursing council registration':'2028-03-01'}],['Priya Menon','Nurse',['OPD'],36,{'BLS':'2026-10-28','Nursing council registration':'2028-01-15'}],
+   ['Neha Verma','Nurse',['OPD','Procedure room'],30,{'BLS':'2027-06-10','Nursing council registration':'2029-02-01'}],['Kavya Iyer','Nurse',['OPD'],28,{'BLS':'2027-04-21'}],
+   ['Rohit Joshi','Nurse',['OPD','Procedure room'],42,{'BLS':'2027-02-17','Nursing council registration':'2028-09-30'}],['Sameer Das','Receptionist',['Front desk'],30,{}],
+   ['Tara Rao','Nurse',['Procedure room'],24,{'BLS':'2027-08-05','Nursing council registration':'2028-12-12'}],['Manoj Pillai','Nurse',['OPD'],38,{'BLS':'2027-01-28','Nursing council registration':'2029-04-04'}]],
+  shifts:[[0,0,'OPD',8,8],[0,2,'Procedure room',8,8],[0,4,'OPD',6,14],[1,1,'OPD',8,8],[2,3,'Procedure room',8,8],[3,0,'OPD',8,8],[4,2,'Procedure room',8,14],[5,5,'Front desk',6,9],[6,3,'Procedure room',8,8],[7,4,'OPD',8,8]],
+  seed:[[3,3,'Yesterday 21:14'],[4,4,'Yesterday 21:40'],[9,2,'Yesterday 22:05'],[6,6,'Today 08:12']]},
+ urbanmart:{name:'UrbanMart',loc:'UrbanMart · Indiranagar Store',manager:'Suresh Kulkarni',approver:'Sunita Kapoor',
+  stations:{'Store associate':['Floor','Stockroom'],Cashier:['Billing']},catalog:['First aid certificate'],
+  cfg:{req:{},enforce:'enforce',alert:30,train:true,hours:true,cap:48,esc:'approver',auto:true,override:true},
+  staff:[['Ananya Rao','Store associate',['Floor','Stockroom'],40,{}],['Ravi Nair','Store associate',['Floor'],44,{}],['Meera Shah','Store associate',['Floor','Stockroom'],38,{}],
+   ['Karthik Iyer','Store associate',['Floor','Stockroom'],46,{}],['Sana Khan','Cashier',['Billing'],40,{}],['Imran Das','Store associate',['Stockroom'],36,{}],
+   ['Divya Menon','Store associate',['Floor'],42,{}],['Arjun Reddy','Store associate',['Floor','Stockroom'],30,{}],['Neha Joshi','Cashier',['Billing'],44,{}]],
+  shifts:[[0,0,'Floor',8,10],[0,2,'Stockroom',8,10],[0,4,'Floor',8,10],[1,1,'Floor',8,10],[2,3,'Stockroom',8,10],[3,0,'Floor',8,10],[6,2,'Floor',8,10],[7,5,'Floor',8,10],[4,1,'Billing',8,10],[5,4,'Stockroom',8,10],[8,3,'Billing',8,10]],
+  seed:[[3,2,'Yesterday 21:14'],[5,6,'Yesterday 21:40'],[4,3,'Yesterday 22:05'],[9,7,'Today 08:12'],[8,8,'Today 09:30'],[7,5,'Today 09:55']]}
+};
+const OUT={auto:['Instant approval','c-auto'],mgr:['Manager decides','c-mgr'],appr:['Needs approver','c-appr'],block:['Not allowed','c-block']};
+
+// =============== state ===============
+let K='freshbowl', S, cfg, draft, reqs, seq, notifs, audit, ui, ICON={auto:'✓',mgr:'…',appr:'↑',block:'×'};
+function load(k){
+  K=k;const D=SC[k];
+  S={...D,staff:D.staff.map((s,i)=>({id:i,n:s[0],r:s[1],st:[...s[2]],h:s[3],c:{...s[4]}})),
+     shifts:D.shifts.map((s,i)=>({id:i,owner:s[0],day:s[1],station:s[2],len:s[3],start:s[4],role:D.staff[s[0]][1]}))};
+  cfg=JSON.parse(JSON.stringify(D.cfg));draft=null;reqs=[];seq=0;notifs=[];audit=[];
+  ui={persona:ui?ui.persona:'staff',staff:0,screen:'home',p:{},tab:'q',page:'overview'};
+  D.seed.forEach(([sh,to,t])=>{const q=submit(S.shifts[sh].owner,to,sh,t,true);accept(q,true)});
+  notifs=[];
+}
+const nm=id=>S.staff[id].n, first=id=>nm(id).split(' ')[0];
+const shiftTxt=sh=>dlabel(sh.day)+', '+hh(sh.start)+'–'+hh(sh.start+sh.len)+' · '+sh.station;
+
+// =============== rules engine ===============
+function credState(exp,date,alert){
+  if(!exp) return {k:'missing',d:null};
+  const d=dd(date,exp); if(d<0) return {k:'expired',d};
+  return {k:d<=alert?'soon':'ok',d};
+}
+function evaluate(shift,takerId,C,hoursOverride){
+  const t=S.staff[takerId],date=iso(shift.day),checks=[];let fail=false,warn=false;
+  const enforce=C.enforce==='enforce';
+  if(t.r!==shift.role){fail=true;checks.push({s:'fail',t:'Role',d:t.r+' cannot cover a '+shift.role+' shift'})}
+  const clash=S.shifts.find(x=>x.owner===takerId&&x.day===shift.day&&x.id!==shift.id);
+  if(clash){fail=true;checks.push({s:'fail',t:'Schedule',d:'Already working '+hh(clash.start)+'–'+hh(clash.start+clash.len)+' that day'})}
+  (C.req[t.r]||[]).forEach(n=>{
+    const c=credState(t.c[n],date,C.alert);
+    if(c.k==='missing'||c.k==='expired'){
+      const txt=c.k==='missing'?'No record on file':'Expired '+(-c.d)+' days before the shift';
+      if(enforce){fail=true;checks.push({s:'fail',t:n,d:txt})}else{warn=true;checks.push({s:'warn',t:n,d:txt+' (warn-only mode)'})}
+    }else if(c.k==='soon')checks.push({s:'warn',t:n,d:'Valid on shift date, expires in '+c.d+' days'});
+    else checks.push({s:'ok',t:n,d:'Valid until '+t.c[n]});
   });
-  const trainOK=q.trained;
-  checks.push({s:cfg.trainGate?(trainOK?'ok':'warn'):'off',t:'Role / station training',d:cfg.trainGate?(trainOK?'Verified':'Not verified. Needs a manager decision'):'Training check is off'});
-  const proj=q.hours+q.len, over=cfg.hoursGate&&proj>cfg.cap;
-  checks.push({s:cfg.hoursGate?(over?'warn':'ok'):'off',t:'Weekly hours',d:cfg.hoursGate?(proj+' h projected vs cap of '+cfg.cap+(over?'. Needs approval':'')):'Hours cap is off'});
+  if(!(C.req[t.r]||[]).length)checks.push({s:'off',t:'Credentials',d:'None required for this role'});
+  const trained=t.st.includes(shift.station);
+  checks.push({s:C.train?(trained?'ok':'warn'):'off',t:'Training',d:C.train?(trained?'Trained at '+shift.station:'Not verified for '+shift.station):'Check is off'});
+  const base=hoursOverride!=null?hoursOverride:t.h, proj=base+shift.len, over=C.hours&&proj>C.cap;
+  checks.push({s:C.hours?(over?'warn':'ok'):'off',t:'Weekly hours',d:C.hours?proj+' h projected vs cap '+C.cap+(over?'. Above cap':''):'Check is off'});
   let out,reason;
-  if(credFail){out='block';reason=checks.filter(c=>c.s==='fail').map(c=>c.t).join(', ')+': certificate not valid'}
-  else if(over){out=cfg.approver?'appr':'mgr';reason=proj+' h exceeds '+cfg.cap+' h'+(cfg.approver?'. Sent to regional approver':'. Sent to manager')}
-  else if(cfg.trainGate&&!trainOK){out='mgr';reason='Training not verified'}
-  else if(cfg.auto){out='auto';reason='All checks passed'+(checks.some(c=>c.s==='warn')?' (renewal reminder sent)':'')}
-  else{out='mgr';reason='No auto-approval. Manager queue'}
-  return{out,reason,checks,proj};
+  const bad=checks.filter(c=>c.s==='fail');
+  if(fail){out='block';reason=bad.map(c=>c.t+': '+c.d).join('; ')}
+  else if(over){out=C.esc==='approver'?'appr':'mgr';reason=proj+' h is above the '+C.cap+' h cap'}
+  else if(warn){out='mgr';reason=checks.filter(c=>c.s==='warn'&&c.d.includes('warn-only')).map(c=>c.t).join(', ')+' not valid (warn-only mode)'}
+  else if(C.train&&!trained){out='mgr';reason='Not verified for '+shift.station}
+  else if(C.auto){out='auto';reason='All checks passed'}
+  else{out='mgr';reason='Auto-approval is off'}
+  return {out,reason,checks,proj,trained};
+}
+const apprName=()=>S.approver==='—'?'regional approver':S.approver;
+const decider=ev=>ev.out==='appr'?apprName():S.manager;
+
+// =============== workflow ===============
+function note(who,ch,text){notifs.unshift({who,ch,text})}
+function logA(actor,event,detail,qid){audit.unshift({t:ui&&ui._seed?'earlier':'just now',actor,event,detail,qid})}
+function submit(from,to,shId,t,seed){
+  const sh=S.shifts[shId];
+  const q={id:++seq,shift:shId,from,to,status:'await',ev:null,t:t||'just now',by:null,snap:null,reason:null,log:[]};
+  reqs.unshift(q);q.log.push(first(from)+' sent request');
+  note(nm(to),'Push',first(from)+' asked you to take '+shiftTxt(sh)+'. Accept or decline.');
+  return q;
+}
+function accept(q,quiet){
+  const sh=S.shifts[q.shift];q.log.push(first(q.to)+' accepted');
+  q.snap=S.staff[q.to].h;q.ev=evaluate(sh,q.to,cfg);q.rules='v'+(cfg.ver||1);
+  logA('Rules engine','Decision: '+OUT[q.ev.out][0],first(q.from)+' → '+first(q.to)+', '+shiftTxt(sh)+'. '+q.ev.reason,q.id);
+  if(q.ev.out==='auto'){apply(q,'Auto');return}
+  q.status=q.ev.out==='block'?'blocked':q.ev.out;
+  if(q.ev.out==='block'){
+    note(nm(q.from),'Push','Swap not allowed: '+q.ev.reason+'.');
+    const bad=q.ev.checks.find(c=>c.s==='fail');
+    if(bad&&bad.t!=='Role'&&bad.t!=='Schedule')note(nm(q.to),'Push','Your '+bad.t+' is not valid. Renew it to be scheduled for '+S.staff[q.to].r.toLowerCase()+' shifts.');
+  }else{
+    const who=q.ev.out==='appr'?apprName():S.manager;
+    q.log.push('Sent to '+who);
+    note(nm(q.from),'Push','Sent to '+who+' for approval. '+q.ev.reason+'.');
+    note(who,'Push','1 swap needs you: '+first(q.from)+' → '+first(q.to)+', '+dlabel(sh.day)+'.');
+  }
+}
+function apply(q,by){
+  const sh=S.shifts[q.shift];
+  S.staff[q.from].h-=sh.len;S.staff[q.to].h+=sh.len;sh.owner=q.to;
+  q.status='approved';q.by=by;q.log.push(by==='Auto'?'Approved automatically':'Approved by '+by);
+  note(nm(q.from),'Push','Swap approved. '+dlabel(sh.day)+' now belongs to '+first(q.to)+'.');
+  note(nm(q.to),'Push','Swap approved. You are working '+shiftTxt(sh)+'.');
+}
+function reject(q,why,by){q.status='rejected';q.by=by;q.reason=why;q.log.push('Rejected by '+by+': '+why);
+  logA(by,'Rejected',first(q.from)+' → '+first(q.to)+'. Reason: '+why,q.id);
+  note(nm(q.from),'Push','Swap rejected by '+by+': '+why+'.');note(nm(q.to),'Push','Swap cancelled: '+why+'.')}
+function approve(q,by){logA(by,'Approved',first(q.from)+' → '+first(q.to),q.id);apply(q,by)}
+const $=s=>document.querySelector(s);
+function toast(t){const e=document.createElement('div');e.className='toast';e.textContent=t;document.body.appendChild(e);setTimeout(()=>e.remove(),2200)}
+
+// =============== shared view helpers ===============
+const chip=(c,t)=>`<span class="chip ${c}">${t}</span>`;
+const outChip=o=>chip(OUT[o][1],OUT[o][0]);
+const statusChip=q=>({await:chip('c-info','Waiting for '+first(q.to)),mgr:chip('c-mgr','With '+S.manager.split(' ')[0]),appr:chip('c-appr','With '+apprName().split(' ')[0]),
+  blocked:chip('c-block','Not allowed'),approved:chip('c-auto',q.by==='Auto'?'Approved instantly':'Approved'),rejected:chip('c-block','Rejected'),declined:chip('c-mgr','Declined')}[q.status]);
+function hoursBar(h,len,cap){const tot=h+len,max=Math.max(60,tot+4);
+  return `<div class="hb"><i style="width:${Math.min(100,h/max*100)}%"></i><i style="left:${h/max*100}%;width:${len/max*100}%;background:${tot>cap?'#c98a0a':'#7f98e8'}"></i><u style="left:${cap/max*100}%"></u></div><div class="sub">${h} h scheduled + ${len} h shift = <b>${tot} h</b> · cap ${cap} h</div>`}
+function checksHtml(ev){return ev.checks.map(c=>`<div class="chk"><span class="dot d-${c.s}">${c.s==='ok'?'✓':c.s==='fail'?'×':c.s==='warn'?'!':'–'}</span><div><b>${c.t}</b> <span class="sub">${c.d}</span></div></div>`).join('')}
+function phone(title,sub,body,nav,back){
+  return `<div class="phone"><div class="sbar"><span>9:41</span><span>●●● 5G</span></div>
+  <div class="appbar">${back?`<button class="back" data-act="back">‹ Back</button>`:''}<h3>${title}</h3>${sub?`<small>${sub}</small>`:''}</div>
+  <div class="body">${body}</div>${nav||''}</div>`}
+function nav(items,cur){return `<div class="nav">${items.map(i=>`<button class="${cur===i[0]?'on':''}" data-act="tab" data-v="${i[0]}">${i[1]}${i[2]?`<span class="bd">${i[2]}</span>`:''}</button>`).join('')}</div>`}
+function notes(title,sprint,paras,list){return `<div class="panel note"><h4>Design note</h4><span class="sp">${sprint}</span><b>${title}</b>${paras.map(p=>`<p>${p}</p>`).join('')}${list?`<ul>${list.map(l=>`<li>${l}</li>`).join('')}</ul>`:''}</div>`}
+function stream(){return `<div class="panel"><h4>Notifications sent</h4>${notifs.length?notifs.slice(0,9).map(n=>`<div class="ev"><span class="ch">${n.ch}</span><b>${n.who}</b><i>${n.text}</i></div>`).join(''):'<div class="empty">Nothing yet. Actions in the app trigger push notifications here, so developers can see who is told what, and when.</div>'}</div>`}
+
+// =============== STAFF app ===============
+function credBanners(id){
+  const t=S.staff[id],out=[];
+  (cfg.req[t.r]||[]).forEach(n=>{const c=credState(t.c[n],TODAY,cfg.alert);
+    if(c.k==='expired'||c.k==='missing')out.push(`<div class="banner ban-bad"><b>${n} ${c.k==='expired'?'expired':'missing'}.</b> You cannot be scheduled or take swaps for ${t.r.toLowerCase()} shifts until it is renewed. Send the new certificate to ${S.manager.split(' ')[0]}.</div>`);
+    else if(c.k==='soon')out.push(`<div class="banner ban-warn"><b>${n} expires in ${c.d} days.</b> Renew it so you keep getting shifts.</div>`)});
+  return out.join('');
+}
+function staffView(){
+  const me=ui.staff,sc=ui.screen,t=S.staff[me];
+  const incoming=reqs.filter(q=>q.to===me&&q.status==='await'),mine=reqs.filter(q=>q.from===me);
+  const NAV=nav([['home','Shifts'],['swaps','Swaps',incoming.length||''],['x','Leave']],sc==='swaps'?'swaps':sc==='home'?'home':'');
+  let n,html;
+  if(sc==='home'){
+    const my=S.shifts.filter(s=>s.owner===me).sort((a,b)=>a.day-b.day);
+    html=phone('Hi '+first(me),t.r+' · '+S.loc,credBanners(me)+'<div class="sub" style="margin:2px 0 8px">NEXT WEEK · '+t.h+' h scheduled</div>'+my.map(s=>{
+      const p=reqs.find(q=>q.shift===s.id&&q.from===me&&['await','mgr','appr'].includes(q.status));
+      return `<div class="card"><div class="row"><div><div class="t">${dlabel(s.day)}</div><div class="s">${hh(s.start)}–${hh(s.start+s.len)} · ${s.station} · ${s.len} h</div></div>${p?statusChip(p):''}</div>
+      <div class="btns">${p?`<button class="btn" data-act="open" data-v="${p.id}">View request</button>`:`<button class="btn pri" data-act="pick" data-v="${s.id}">Request swap</button>`}</div></div>`}).join(''),NAV);
+    n=notes('Home: shifts and one clear action','Sprint 2–3',['Staff see their week and one action per shift. The credential banner (Sprint 1) warns before a certificate lapses instead of after.'],['Banner appears at expiry minus alert days (default 30)','Expired or missing: red banner, explains what to do','Open a swap from any shift card']);
+  }else if(sc==='pick'){
+    const sh=S.shifts[ui.p.shift];
+    const opts=S.staff.filter(x=>x.id!==me&&x.r===sh.role).map(x=>({x,ev:evaluate(sh,x.id,cfg)})).sort((a,b)=>(a.ev.out==='block')-(b.ev.out==='block')||['auto','mgr','appr'].indexOf(a.ev.out)-['auto','mgr','appr'].indexOf(b.ev.out));
+    html=phone('Who can take this shift?',shiftTxt(sh),`<div class="sub" style="margin-bottom:8px">Checked against rules before you ask. You will not wait a day to find out.</div>`+opts.map(({x,ev})=>`
+      <button class="pick ${ev.out==='block'?'dis':''}" ${ev.out==='block'?'disabled':`data-act="confirm" data-v="${x.id}"`}><div class="row"><div><div class="t">${x.n}</div><div class="s">${x.h} h this week</div></div>${outChip(ev.out)}</div>
+      ${ev.out==='auto'?'':`<div class="sub">${ev.out==='block'?'Cannot take it: ':'Why: '}${ev.reason}</div>`}</button>`).join(''),NAV,true);
+    n=notes('Eligibility shown before sending','Sprint 2–3',['This is the biggest change for staff. Today they agree on WhatsApp, then wait. Here the app tells them in advance who can take the shift, and what will happen.','Blocked colleagues are greyed out with the reason in plain words (Sprint 1 covers certificates).'],['Sorted: instant approval first, then needs a person, then not allowed','Over-cap colleagues stay selectable; they route to an approver (Sprint 4)']);
+  }else if(sc==='confirm'){
+    const sh=S.shifts[ui.p.shift],to=ui.p.to,ev=evaluate(sh,to,cfg);
+    const next={auto:`When ${first(to)} accepts, the swap is approved instantly. No manager step.`,mgr:`When ${first(to)} accepts, it goes to ${S.manager} to decide. Reason: ${ev.reason}.`,appr:`When ${first(to)} accepts, it goes to ${apprName()} to decide. Reason: ${ev.reason}.`}[ev.out];
+    html=phone('Confirm request','',`<div class="card"><div class="s">You give</div><div class="t">${shiftTxt(sh)}</div><div class="s" style="margin-top:8px">To</div><div class="t">${nm(to)} ${outChip(ev.out)}</div></div>
+      <div class="card"><div class="t">What happens next</div><div class="s" style="margin-top:4px">${next}</div></div><button class="btn pri full" data-act="send">Send request to ${first(to)}</button>`,NAV,true);
+    n=notes('Say what happens next, before the tap','Sprint 2–3',['Setting expectations removes the follow-up question "did my manager see it?". Copy changes with the predicted outcome.']);
+  }else if(sc==='status'){
+    const q=reqs.find(r=>r.id===ui.p.q),sh=S.shifts[q.shift];
+    const R={await:['r-wait','⏳','Waiting for '+first(q.to),'They have been asked to accept.'],approved:['r-auto','✓',q.by==='Auto'?'Approved instantly':'Approved','Your shift now belongs to '+first(q.to)+'.'],
+      mgr:['r-mgr','…','With '+S.manager,q.ev&&q.ev.reason],appr:['r-appr','↑','With '+apprName(),q.ev&&q.ev.reason],blocked:['r-block','×','Not allowed',q.ev&&q.ev.reason],rejected:['r-block','×','Rejected',q.reason],declined:['r-mgr','–','Declined','']}[q.status];
+    const steps=[['d','Request sent to '+first(q.to)],[q.status==='await'?'n':'d','Colleague accepts'],[q.status==='await'?'':(q.status==='mgr'||q.status==='appr')?'n':'d',q.status==='await'?'Rules check and decision':q.status==='approved'?(q.by==='Auto'?'Rules passed, approved in seconds':'Approved by '+q.by):q.status==='mgr'||q.status==='appr'?'Waiting for a decision':'Decision: '+OUT[q.ev?q.ev.out:'block'][0]]];
+    html=phone('Swap request',shiftTxt(sh),`<div class="result ${R[0]}"><div class="ic">${R[1]}</div><b>${R[2]}</b><div>${R[3]||''}</div></div><div class="tl">${steps.map(s=>`<div class="${s[0]}">${s[1]}</div>`).join('')}</div>
+      ${q.status==='blocked'?`<div class="banner ban-warn"><b>What you can do:</b> choose another colleague, or ask ${first(q.to)} to renew the certificate with ${S.manager.split(' ')[0]}.</div><button class="btn pri full" data-act="pick" data-v="${q.shift}">Choose another colleague</button>`:''}
+      ${q.status==='await'?`<div class="demo">Demo shortcut: skip ahead as ${first(q.to)}.<div class="btns"><button class="btn" data-act="acceptDemo" data-v="${q.id}">${first(q.to)} accepts</button></div></div>`:''}`,NAV,true);
+    n=notes('One status screen for every outcome','Sprint 2–3',['Same layout for all four outcomes, so staff learn it once. Blocked requests always say why and offer a next step.'],['Timeline has three fixed steps','Blocked: certificate reasons shown in plain words (Sprint 1)','Hours-cap routing to an approver (Sprint 4)']);
+  }else{
+    html=phone('Swaps','Requests you sent and received',(incoming.length?`<div class="sub">NEEDS YOUR ANSWER</div>`+incoming.map(q=>`<div class="card"><div class="t">${first(q.from)} wants you to take ${dlabel(S.shifts[q.shift].day)}</div><div class="s">${shiftTxt(S.shifts[q.shift])}</div><div class="btns"><button class="btn" data-act="decline" data-v="${q.id}">Decline</button><button class="btn pri" data-act="acceptReal" data-v="${q.id}">Accept</button></div></div>`).join(''):'')+
+      `<div class="sub" style="margin:4px 0 6px">YOUR REQUESTS</div>`+(mine.length?mine.map(q=>`<button class="pick" data-act="open" data-v="${q.id}"><div class="row"><div><div class="t">${dlabel(S.shifts[q.shift].day)} → ${first(q.to)}</div><div class="s">${q.t}</div></div>${statusChip(q)}</div></button>`).join(''):'<div class="empty">No requests yet.</div>'),NAV);
+    n=notes('Swaps tab: inbox and history','Sprint 2–3',['Colleagues accept in the app. Use the "Signed in as" switch above the phone to play both sides.']);
+  }
+  return `<div class="stage"><div>${n}</div><div><div style="text-align:center;margin-bottom:8px" class="sub">Signed in as <select id="asSel">${S.staff.map(s=>`<option value="${s.id}" ${s.id===me?'selected':''}>${s.n} (${s.r})</option>`).join('')}</select></div>${html}</div>${stream()}</div>`;
 }
 
-// ---------- render ----------
-const LBL={auto:'Auto-approved',mgr:'Manager',appr:'Approver',block:'Blocked'};
-const $=id=>document.getElementById(id);
+// =============== MANAGER / APPROVER app ===============
+function mgrView(role){
+  const isA=role==='approver',sc=ui.screen,tab=ui.tab,who=isA?apprName():S.manager;
+  if(isA&&cfg.esc!=='approver'&&!reqs.some(q=>q.status==='appr'))return `<div class="stage"><div>${notes('Approver view is switched off','Sprint 4',['In this account hours-cap escalation goes to the location manager. Choose UrbanMart, or switch it on in Admin → Rules.'])}</div><div>${phone('Regional approver','Not enabled','<div class="empty">Nothing is routed here. Admin can designate an approver in Rules.</div>','')}</div>${stream()}</div>`;
+  const need=reqs.filter(q=>q.status===(isA?'appr':'mgr')),done=reqs.filter(q=>['approved','rejected','blocked'].includes(q.status));
+  const auto=done.filter(q=>q.by==='Auto').length;
+  const items=isA?[['q','Needs you',need.length||''],['a','Activity']]:[['q','Needs you',need.length||''],['a','Activity'],['t','Team']];
+  const NAV=nav(items,sc==='home'?tab:'');
+  let n,html;
+  const card=q=>{const sh=S.shifts[q.shift];return `<div class="card"><div class="row"><div><div class="t">${first(q.to)} takes ${first(q.from)}'s shift</div><div class="s">${shiftTxt(sh)}</div></div></div>
+    <div style="margin:6px 0">${chip(isA?'c-appr':'c-mgr',q.ev.reason)}</div>${hoursBar(q.snap,sh.len,cfg.cap)}
+    <div class="btns"><button class="btn" data-act="open" data-v="${q.id}">Review</button><button class="btn ok" data-act="approveQ" data-v="${q.id}">Approve</button></div></div>`};
+  if(sc==='home'&&tab==='q'){
+    html=phone(isA?'Approvals':'Needs you',(isA?S.loc+' + 2 more':S.loc)+' · '+who,
+      `<div class="banner ban-ok"><b>${auto} swaps approved automatically</b> since yesterday. You only see the ones below.</div>`+(need.length?need.map(card).join(''):`<div class="card" style="text-align:center"><div class="t">All clear</div><div class="s">No swaps need a decision.</div></div>`),NAV);
+    n=notes(isA?'Approver inbox: only over-cap swaps':'Manager queue: exceptions only','Sprint '+(isA?'4':'2–3'),isA?['New role for UrbanMart. An approver designated by Admin sees only swaps that cross the hours cap. Same card, same actions, so one UI to build.']:['Today a manager sees every swap (25–30 a night in the interview). Here the queue shows only the ones rules could not clear, and says why on the card.','The green banner tells the manager how much work the rules removed.'],['Card shows reason chip and hours bar (red tick = cap)','Approve in one tap; Review opens the decision trace','Rejecting needs a reason, which staff see']);
+  }else if(sc==='home'&&tab==='a'){
+    html=phone('Activity','Decisions in the last 2 days',done.length?done.map(q=>`<div class="card"><div class="row"><div><div class="t">${first(q.from)} → ${first(q.to)}</div><div class="s">${dlabel(S.shifts[q.shift].day)} · ${q.t}</div></div>${q.status==='blocked'?chip('c-block','Blocked'):q.status==='rejected'?chip('c-block','Rejected'):chip('c-auto','Approved')}</div>
+      <div class="sub">${q.status==='blocked'?q.ev.reason:'Decided by <b>'+q.by+'</b>'+(q.by==='Auto'?' · '+q.ev.reason:'')}</div></div>`).join(''):'<div class="empty">Nothing yet.</div>',NAV);
+    n=notes('Activity: nothing happens silently','Sprint 2–3',['Auto-approved swaps are visible with the reason, so managers can trust the rules and spot problems. Each row maps to an audit log entry.']);
+  }else if(sc==='home'&&tab==='t'){
+    html=phone('Team','Credentials and training · '+S.loc,S.staff.map(s=>{const rq=cfg.req[s.r]||[];
+      const cs=rq.map(c=>{const x=credState(s.c[c],TODAY,cfg.alert);return chip(x.k==='ok'?'c-auto':x.k==='soon'?'c-appr':'c-block',c+': '+(x.k==='ok'?'valid':x.k==='soon'?'expires in '+x.d+' d':x.k))}).join(' ');
+      return `<button class="pick" data-act="member" data-v="${s.id}"><div class="row"><div><div class="t">${s.n}</div><div class="s">${s.r} · ${s.h} h · trained: ${s.st.join(', ')}</div></div></div>${cs?`<div style="margin-top:5px">${cs}</div>`:''}</button>`}).join(''),NAV);
+    n=notes('Team: where the data comes from','Sprint 1',['The rules are only as good as this data. Managers already track it in Excel; here it lives where it is enforced.'],['Each required credential shows valid / expiring / expired / missing','Tap a person to edit expiry dates and stations','Warn-only mode (Admin) gives 14 days to backfill before blocking']);
+  }else if(sc==='member'){
+    const s=S.staff[ui.p.m],rq=cfg.req[s.r]||[];
+    html=phone(s.n,s.r,`<div class="sub">TRAINED STATIONS</div><div style="margin-bottom:10px">${S.stations[s.r].map(st=>`<button class="stbtn ${s.st.includes(st)?'on':''}" data-act="station" data-v="${s.id}|${st}">${st}</button>`).join('')}</div>
+      <div class="sub">CREDENTIALS REQUIRED FOR ${s.r.toUpperCase()}</div>${rq.length?rq.map(c=>`<div class="card"><div class="t">${c}</div><div class="f"><label>Expiry date</label><input type="date" value="${s.c[c]||''}" data-act="cred" data-v="${s.id}|${c}"></div>${s.c[c]?'':'<div class="sub" style="color:var(--block)">No record. Will block swaps in enforce mode.</div>'}</div>`).join(''):'<div class="empty">None required for this role.</div>'}`,NAV,true);
+    n=notes('Edit credentials and stations','Sprint 1',['Changes take effect on the next decision. Expiry is checked against the shift date, not today, so a certificate that lapses on Dec 5 blocks a Dec 10 shift.']);
+  }else{ // detail
+    const q=reqs.find(r=>r.id===ui.p.q),sh=S.shifts[q.shift],act=['mgr','appr'].includes(q.status);
+    html=phone('Review swap',shiftTxt(sh),`<div class="card"><div class="t">${nm(q.from)} → ${nm(q.to)}</div><div class="s">${q.t}</div></div>
+      <div class="card"><div class="t" style="margin-bottom:4px">Why it needs you</div>${chip(isA?'c-appr':'c-mgr',q.ev.reason)}<div style="margin-top:8px">${checksHtml(q.ev)}</div>${hoursBar(q.snap,sh.len,cfg.cap)}</div>
+      ${act?(ui.p.rej?`<div class="sub" style="margin-bottom:6px">Reason for rejecting (staff will see it)</div>${['Coverage gap','Skill mismatch','Overtime budget','Other'].map(r=>`<button class="stbtn" data-act="rejectQ" data-v="${q.id}|${r}">${r}</button>`).join('')}`:`<div class="btns"><button class="btn bad" data-act="rejectAsk">Reject</button><button class="btn ok" data-act="approveQ" data-v="${q.id}">Approve</button></div>`):`<div class="banner ${q.status==='approved'?'ban-ok':'ban-bad'}">${statusChip(q)} ${q.status==='blocked'?'Admin can override in the web console.':''}</div>`}`,NAV,true);
+    n=notes('Decision trace on every request','Sprint 2–3',['Managers decide with the same checks they run by hand today (training, overtime, credentials), now laid out in one place.'],['Check dots: green pass, amber needs a person, red fails','Reject reasons are fixed chips: fast on mobile and reportable']);
+  }
+  return `<div class="stage"><div>${n}</div><div>${html}</div>${stream()}</div>`;
+}
+
+// =============== ADMIN web ===============
+function adminView(){
+  const pg=ui.page,blocked=reqs.filter(q=>q.status==='blocked');
+  const tot=reqs.length||1,pct=k=>Math.round(reqs.filter(q=>k(q)).length/tot*100);
+  const side=`<div class="side"><b>Shiftwell</b>${[['overview','Overview'],['rules','Rules'],['audit','Audit log']].map(p=>`<button class="${pg===p[0]?'on':''}" data-act="page" data-v="${p[0]}">${p[1]}</button>`).join('')}<div class="sub" style="padding:14px 10px 0">${S.name}<br>Head office · Admin</div></div>`;
+  let main,n;
+  if(pg==='overview'){
+    const soon=S.staff.filter(s=>(cfg.req[s.r]||[]).some(c=>['soon','expired','missing'].includes(credState(s.c[c],TODAY,cfg.alert).k))),hi=S.staff.filter(s=>s.h>=cfg.cap-4);
+    main=`<div class="wm"><h2>Overview · ${S.loc}</h2><p class="lead">Company-wide view for Admin. Admins read reports and set rules; they do not approve swaps.</p>
+    <div class="kpis"><div class="kpi"><b>${pct(q=>q.by==='Auto')}%</b><span>of swaps approved automatically</span></div><div class="kpi"><b>${reqs.filter(q=>['mgr','appr'].includes(q.status)).length}</b><span>waiting for a person</span></div>
+    <div class="kpi"><b>${blocked.length}</b><span>blocked by credential or schedule</span></div><div class="kpi"><b>${hi.length}</b><span>staff within 4 h of the ${cfg.cap} h cap</span></div></div>
+    <div class="two"><div><div class="sec"><h3>Blocked: needs your call</h3><p class="h">Only Admin can override a block, with a reason that goes to the audit log.</p>
+    ${blocked.length?`<table><tr><th>Request</th><th>Why blocked</th><th></th></tr>${blocked.map(q=>`<tr><td>${first(q.from)} → ${first(q.to)}<br><span class="sub">${dlabel(S.shifts[q.shift].day)}</span></td><td>${q.ev.reason}</td><td>${cfg.override?`<button class="btn" data-act="ovr" data-v="${q.id}">Override</button>`:''}</td></tr>`).join('')}</table>`:'<div class="empty">No blocked requests.</div>'}</div>
+    <div class="sec"><h3>Credentials needing attention</h3>${soon.length?`<table>${soon.map(s=>`<tr><td>${s.n}</td><td>${(cfg.req[s.r]||[]).map(c=>{const x=credState(s.c[c],TODAY,cfg.alert);return x.k==='ok'?'':chip(x.k==='soon'?'c-appr':'c-block',c+': '+(x.k==='soon'?'expires in '+x.d+' d':x.k))}).join(' ')}</td></tr>`).join('')}</table>`:'<div class="empty">None. Add a required credential under Rules to track one.</div>'}</div></div>
+    <div><div class="sec"><h3>Reference baseline</h3><p class="h">From the account data pack, Sept 2026.</p>${K==='freshbowl'?'38% of swaps approved within 24 h. Manager scheduling time 6.5 h/week.':K==='carepoint'?'71% approved within 24 h. Audit found two shifts covered by nurses with lapsed BLS.':'64% approved within 24 h. Overtime is 9% of the wage bill.'}</div>
+    <div class="sec"><h3>This demo session</h3><p class="h">Counts update as you act in the other views.</p>${['auto','mgr','appr','block'].map(o=>`<div class="row" style="margin:3px 0">${outChip(o)}<b>${reqs.filter(q=>q.ev&&q.ev.out===o).length}</b></div>`).join('')}</div></div></div></div>`;
+    n='Overview: head-office report, not an approval inbox';
+  }else if(pg==='rules'){
+    const d=draft||(draft=JSON.parse(JSON.stringify(cfg)));
+    const rolesAvail=Object.keys(S.stations);
+    const pv={auto:0,mgr:0,appr:0,block:0},base=reqs.filter(q=>q.snap!=null);
+    base.forEach(q=>{pv[evaluate(S.shifts[q.shift],q.to,d,q.snap).out]++});
+    const changed=JSON.stringify(d)!==JSON.stringify(cfg);
+    main=`<div class="wm"><h2>Rules</h2><p class="lead">One rule set decides every shift assignment at ${S.name}. Edit a draft, preview the effect on past requests, then publish.</p>
+    <div class="two"><div>
+     <div class="sec"><h3>1 · Required credentials <span class="sp">Sprint 1</span></h3><p class="h">Blocks scheduling and swaps when a required credential is missing or expired on the shift date.</p>
+      <table>${Object.entries(d.req).map(([r,l])=>l.map(c=>`<tr><td>${r}</td><td>${c}</td><td><button class="btn" data-act="rmReq" data-v="${r}|${c}">Remove</button></td></tr>`).join('')).join('')||'<tr><td class="empty">No credentials required.</td></tr>'}</table>
+      <div class="f"><select id="addRole">${rolesAvail.map(r=>`<option>${r}</option>`).join('')}</select><select id="addCred">${S.catalog.map(c=>`<option>${c}</option>`).join('')}</select><button class="btn" data-act="addReq">Add requirement</button></div>
+      <div class="f"><label>Enforcement</label><label><input type="radio" name="enf" value="warn" ${d.enforce==='warn'?'checked':''} data-act="enf"> Warn only (14-day backfill)</label><label><input type="radio" name="enf" value="enforce" ${d.enforce==='enforce'?'checked':''} data-act="enf"> Enforce (block)</label></div>
+      <div class="f"><label>Alert staff and managers</label><input type="number" id="alertD" value="${d.alert}" min="7" max="90" data-act="alert"><label>days before expiry</label></div>
+      <div class="f"><label class="tg"><input type="checkbox" ${d.override?'checked':''} data-act="tgOverride"> Allow Admin override of blocks (always logged)</label></div></div>
+     <div class="sec"><h3>2 · Training check <span class="sp">Sprint 2–3</span></h3><div class="f"><label class="tg"><input type="checkbox" ${d.train?'checked':''} data-act="tgTrain"> Send to manager if the person is not trained for the station</label></div></div>
+     <div class="sec"><h3>3 · Weekly hours cap <span class="sp">Sprint 4</span></h3><div class="f"><label class="tg"><input type="checkbox" ${d.hours?'checked':''} data-act="tgHours"> Require approval above</label><input type="number" id="capIn" value="${d.cap}" min="20" max="80" data-act="cap"><label>hours a week</label></div>
+      <div class="f"><label>Escalate to</label><select data-act="esc"><option value="manager" ${d.esc==='manager'?'selected':''}>Location manager</option><option value="approver" ${d.esc==='approver'?'selected':''}>Regional approver${S.approver!=='—'?' ('+S.approver+')':''}</option></select></div>
+      <p class="h">Week runs Monday to Sunday and counts scheduled hours. Leave is excluded.</p></div>
+     <div class="sec"><h3>4 · Auto-approval <span class="sp">Sprint 2–3</span></h3><div class="f"><label class="tg"><input type="checkbox" ${d.auto?'checked':''} data-act="tgAuto"> Approve instantly when every check passes</label></div></div></div>
+     <div><div class="sec impact"><h3>Impact preview</h3><p class="h">This draft applied to the ${base.length} requests decided in this demo.</p>
+      <div class="imp"><div style="background:var(--auto-bg);color:var(--auto)"><b>${pv.auto}</b><span>Instant</span></div><div style="background:var(--mgr-bg);color:var(--mgr)"><b>${pv.mgr}</b><span>Manager</span></div><div style="background:var(--appr-bg);color:var(--appr)"><b>${pv.appr}</b><span>Approver</span></div><div style="background:var(--block-bg);color:var(--block)"><b>${pv.block}</b><span>Blocked</span></div></div>
+      <p class="h">Today every one of these waits for the location manager.</p>
+      <div class="btns"><button class="btn" data-act="discard" ${changed?'':'disabled'}>Discard</button><button class="btn pri" data-act="publish" ${changed?'':'disabled'}>Publish rules</button></div>
+      <p class="h" style="margin-top:8px">Publishing applies to new requests. Each decision stores the rule version it used. Rollout is behind a feature flag per account (Sprint 5).</p></div></div></div></div>`;
+    n='Rules: one page, four rules, preview before publish';
+  }else{
+    main=`<div class="wm"><h2>Audit log</h2><p class="lead">Every decision, override and rejection, with the actor and the reason. Built for auditors.</p><div class="sec">
+    ${audit.length?`<table><tr><th>When</th><th>Actor</th><th>Event</th><th>Detail</th></tr>${audit.map(a=>`<tr><td>${a.t}</td><td>${a.actor}</td><td><b>${a.event}</b></td><td>${a.detail}</td></tr>`).join('')}</table>`:'<div class="empty">No events yet. Send a swap from the Staff view.</div>'}</div></div>`;
+    n='Audit log: the answer to "show us the control"';
+  }
+  const np=notes(n,pg==='rules'?'Sprints 1–5':'Sprint 1',[pg==='audit'?'This is what CarePoint\'s compliance head shows an auditor: who was blocked, why, and who overrode it.':pg==='rules'?'Admins see the consequence of a rule change before it goes live. Warn-only mode lets a customer backfill credential data without blocking anyone on day one.':'Admin work is reading and configuring, a few times a month, on the web.']);
+  return `<div class="stage wide"><div><div class="web"><div class="wbar"><i></i><i></i><i></i><span>app.shiftwell.in/${pg}</span></div><div class="wgrid">${side}${main}</div></div><div style="margin-top:12px">${np}</div></div>${stream()}</div>`;
+}
+
+// =============== SPEC ===============
+function specView(){
+  return `<div class="spec">
+  <div class="panel"><h2>Design and dev handoff</h2><p class="sub">Everything the clickable views imply, in one place. Sprint tags match the plan: S1 credential gate, S2–3 rules engine, S4 hours cap and approver, S5 rollout, S6 buffer. Sprints are two weeks, starting 19 Oct 2026.</p>
+  <h3>1 · End-to-end flow</h3>
+  <div class="flow"><div class="fb"><b>Staff</b>Picks shift, sees who is eligible</div><div class="ar">→</div><div class="fb"><b>Colleague</b>Accepts in app (24 h expiry)</div><div class="ar">→</div><div class="fb eng"><b>Rules engine</b>Runs at decision time, stores checks and rule version</div><div class="ar">→</div>
+  <div class="fb"><b>One of four outcomes</b>Auto · Manager · Approver · Blocked</div><div class="ar">→</div><div class="fb"><b>Notify + audit</b>Push to everyone affected, event logged</div></div>
+  <h3>2 · Decision rules (evaluated in this order)</h3>
+  <table><tr><th>#</th><th>Check</th><th>Result</th><th>Staff sees</th><th>Ships</th></tr>
+  <tr><td>1</td><td>Role mismatch or clash with another shift that day</td><td>Blocked</td><td>"Cannot take it: already working 08:00–16:00 that day"</td><td>S2–3</td></tr>
+  <tr><td>2</td><td>Required credential missing or expired <b>on the shift date</b></td><td>Blocked (enforce) · Manager (warn-only)</td><td>"BLS: expired 25 days before the shift"</td><td>S1</td></tr>
+  <tr><td>3</td><td>Projected weekly hours above cap</td><td>Approver, or Manager if no approver set</td><td>"Sent to Sunita. 54 h is above the 48 h cap"</td><td>S4</td></tr>
+  <tr><td>4</td><td>Not trained for station</td><td>Manager</td><td>"Sent to Rekha. Not verified for Grill"</td><td>S2–3</td></tr>
+  <tr><td>5</td><td>All pass</td><td>Auto-approve (or Manager if auto is off)</td><td>"Approved instantly"</td><td>S2–3</td></tr></table>
+  <p class="sub">Missing data never passes silently: missing credential blocks after the warn-only period, unknown training goes to a person.</p></div>
+
+  <div class="grid2"><div class="panel"><h3>3 · Screen inventory</h3><table><tr><th>Surface</th><th>Screens</th><th>Ships</th></tr>
+  <tr><td>Staff app</td><td>Home with credential banner · Colleague picker with pre-check · Confirm · Status · Swaps inbox</td><td>S1 banner, S2–3 rest</td></tr>
+  <tr><td>Manager app</td><td>Needs you · Review · Activity · Team · Edit credentials and stations</td><td>S1 Team, S2–3 rest</td></tr>
+  <tr><td>Approver (app)</td><td>Approvals · Review · Activity</td><td>S4</td></tr>
+  <tr><td>Admin web</td><td>Overview · Rules with impact preview · Audit log · Override dialog</td><td>S1 gate, audit, override; S2–4 rules; S5 preview and flag</td></tr></table>
+  <h3>States to design for every screen</h3><ul class="sub"><li>Loading and offline (queue cached, actions retry)</li><li>Empty ("All clear", no requests yet)</li><li>Error on send, with retry</li><li>Colleague did not answer in 24 h: request expires, requester notified</li></ul></div>
+  <div class="panel"><h3>4 · Notifications</h3><table><tr><th>Event</th><th>Who</th></tr>
+  <tr><td>Swap requested</td><td>Colleague</td></tr><tr><td>Auto-approved / approved</td><td>Both staff (manager sees it in Activity, no push)</td></tr>
+  <tr><td>Needs a decision</td><td>Manager or approver; requester told who has it</td></tr>
+  <tr><td>Blocked</td><td>Requester (reason); credential owner (renew)</td></tr><tr><td>Rejected</td><td>Both staff, with reason</td></tr>
+  <tr><td>Credential expiring</td><td>Staff and manager, at 30 days (configurable)</td></tr></table>
+  <p class="sub">Delivery goes through one channel interface. Push and SMS first; WhatsApp is a future adapter, not a redesign.</p></div></div>
+
+  <div class="grid2"><div class="panel"><h3>5 · Data model (v1)</h3><table><tr><th>Entity</th><th>Key fields</th></tr>
+  <tr><td><code>Credential</code></td><td>staff_id, type, expiry_date, updated_by</td></tr>
+  <tr><td><code>RoleRequirement</code></td><td>account_id, role, credential_type</td></tr>
+  <tr><td><code>RuleSet</code></td><td>account_id, version, enforce_mode, alert_days, train_gate, hours_cap, escalate_to, auto_approve, published_at</td></tr>
+  <tr><td><code>SwapRequest</code></td><td>shift_id, from_id, to_id, status, accepted_at, decided_by</td></tr>
+  <tr><td><code>Decision</code></td><td>request_id, rule_version, checks[], outcome, actor, reason</td></tr>
+  <tr><td><code>Approver</code></td><td>account_id, user_id, location_ids[]</td></tr></table></div>
+  <div class="panel"><h3>6 · Edge cases and open questions</h3><ul class="sub">
+  <li>A swap changes hours for both people. The prototype checks the taker; production checks both sides.</li>
+  <li>Rule changed while a request is pending: decide with the version live at acceptance time.</li>
+  <li>Week boundary and leave treatment: assumed Mon–Sun, leave excluded. UrbanMart to confirm.</li>
+  <li>Staff in more than one location: hours are summed across locations.</li>
+  <li>Approver does not respond: v1 has no auto-escalation. Revisit with pilot data.</li>
+  <li>Override: Admin only, reason mandatory, notifies both staff, appears in audit.</li>
+  <li>Engineering to confirm: estimate for the engine (about 2 sprints) and whether notifications reuse existing infrastructure.</li></ul></div></div></div>`;
+}
+
+// =============== render + events ===============
+const PERSONAS=[['staff','Staff · mobile'],['manager','Location manager · mobile'],['approver','Regional approver · mobile'],['admin','Admin · web'],['spec','Handoff spec']];
 function render(){
-  const cfg=state.cfg, res=state.reqs.map(q=>({q,e:evaluate(q,cfg)}));
-  const n=k=>res.filter(x=>x.e.out===k).length, N=res.length;
-  $('stats').innerHTML=['auto','mgr','appr','block'].map(k=>`<div class="stat ${k}"><b>${n(k)}</b><span>${LBL[k]}${k==='auto'?' instantly':k==='mgr'?' queue':k==='appr'?' (escalated)':' with reason'}</span></div>`).join('');
-  const mq=n('mgr'), cut=Math.round((1-mq/N)*100);
-  $('loadTitle').textContent='Location manager queue';
-  $('loadSub').textContent='Requests needing a manager tonight, vs all '+N+' today';
-  $('loadBar').style.width=(mq/N*100)+'%';
-  $('loadN').innerHTML=`<b>${mq}</b> of ${N} &nbsp;<span class="muted">(${cut>0?'−'+cut+'%':'no change'})</span>`;
-  $('filters').innerHTML=['all','auto','mgr','appr','block'].map(k=>`<span class="chip ${state.filter===k?'on':''}" data-f="${k}">${k==='all'?'All ('+N+')':LBL[k]+' ('+n(k)+')'}</span>`).join('');
-  $('rows').innerHTML=res.filter(x=>state.filter==='all'||x.e.out===state.filter).map(({q,e})=>
-    `<tr class="row ${state.sel===q.id?'sel':''}" data-id="${q.id}"><td>#${q.id} ${q.from} → <b>${q.to}</b></td><td>${q.role}</td><td>${q.date}, ${q.len} h</td><td>${e.proj} h</td><td><span class="badge b-${e.out}">${LBL[e.out]}</span></td><td class="muted">${e.reason}</td></tr>`).join('');
-  const sel=res.find(x=>x.q.id===state.sel), t=$('trace');
-  if(sel){
-    const {q,e}=sel;
-    t.className='trace card on';
-    t.innerHTML=`<h3>Decision trace · request #${q.id}: ${q.to} takes ${q.from}'s ${q.len} h ${q.role.toLowerCase()} shift on ${q.date}</h3>`+
-      e.checks.map(c=>`<div class="chk"><span class="dot d-${c.s}">${c.s==='ok'?'✓':c.s==='fail'?'×':c.s==='warn'?'!':'–'}</span><div><b>${c.t}</b> <span class="muted">${c.d}</span></div></div>`).join('')+
-      `<div style="margin-top:8px"><span class="badge b-${e.out}">${LBL[e.out]}</span> ${e.reason}`+
-      (e.out==='block'?` &nbsp;<button class="btn" id="ovr">Admin override (logged)</button>`:'')+`</div>`;
-    const o=$('ovr'); if(o) o.onclick=()=>{state.audit.unshift(`Request #${q.id}: Admin override of blocked credential, reason required in production. ${new Date().toLocaleTimeString()}`);renderAudit()};
-  } else t.className='trace card';
-  renderAudit();
+  $('#persona').innerHTML=PERSONAS.map(p=>`<button class="${ui.persona===p[0]?'on':''}" data-act="persona" data-v="${p[0]}">${p[1]}</button>`).join('');
+  $('#app').innerHTML=ui.persona==='staff'?staffView():ui.persona==='manager'?mgrView('manager'):ui.persona==='approver'?mgrView('approver'):ui.persona==='admin'?adminView():specView();
+  const as=$('#asSel');if(as)as.onchange=e=>{ui.staff=+e.target.value;ui.screen='home';render()};
 }
-function renderAudit(){ $('audit').innerHTML=state.audit.length?'<b>Audit log</b><ul>'+state.audit.map(a=>`<li>${a}</li>`).join('')+'</ul>':''; }
-
-function syncControls(){
-  const c=state.cfg;
-  $('credGate').checked=c.credGate;$('trainGate').checked=c.trainGate;$('hoursGate').checked=c.hoursGate;
-  $('cap').value=c.cap;$('approver').checked=c.approver;$('auto').checked=c.auto;
-  const rq=SCEN[state.sc].requirements, ks=Object.keys(rq);
-  $('reqs').innerHTML=ks.length?ks.map(k=>`<b>${k}:</b> ${rq[k].join(' + ')}`).join('<br>'):'No certificates required in this account (rule set up, nothing to enforce).';
+function go(screen,p){ui.screen=screen;ui.p=p||{};render()}
+function modalOvr(q){
+  $('#modalRoot').innerHTML=`<div class="modal"><div class="box"><h3 style="margin:0 0 6px">Override block</h3><p class="sub">${first(q.from)} → ${first(q.to)}: ${q.ev.reason}</p>
+  <div class="f"><textarea id="ovrWhy" rows="3" style="width:100%" placeholder="Reason (required, goes to the audit log)"></textarea></div>
+  <div class="btns"><button class="btn" data-act="closeM">Cancel</button><button class="btn pri" data-act="doOvr" data-v="${q.id}">Override and approve</button></div></div></div>`;
 }
-function load(sc){
-  state.sc=sc;state.cfg={...SCEN[sc].cfg};state.reqs=gen();state.filter='all';state.sel=null;state.audit=[];
-  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('on',t.dataset.sc===sc));
-  syncControls();render();
-}
-// ---------- wiring ----------
-Object.entries(SCEN).forEach(([k,s])=>{
-  const b=document.createElement('button');b.className='tab';b.dataset.sc=k;b.innerHTML=`<b>${s.label}</b><small>${s.sub}</small>`;
-  b.onclick=()=>load(k);$('tabs').appendChild(b);
+document.addEventListener('click',e=>{
+  const el=e.target.closest('[data-act]');if(!el||el.tagName==='INPUT'&&el.type!=='button')return;
+  const a=el.dataset.act,v=el.dataset.v;
+  if(el.disabled)return;
+  if(a==='persona'){ui.persona=v;ui.screen='home';ui.p={};ui.tab='q';render()}
+  else if(a==='tab'){if(v==='x')return;ui.screen='home';ui.tab=v;ui.p={};if(v==='home'||v==='swaps'){ui.screen=v}render()}
+  else if(a==='back'){ui.screen=ui.persona==='staff'?'home':'home';ui.p={};render()}
+  else if(a==='pick')go('pick',{shift:+v});
+  else if(a==='confirm')go('confirm',{shift:ui.p.shift,to:+v});
+  else if(a==='send'){const q=submit(ui.staff,ui.p.to,ui.p.shift);go('status',{q:q.id})}
+  else if(a==='open'){const q=reqs.find(r=>r.id===+v);if(ui.persona==='staff')go('status',{q:q.id});else go('detail',{q:q.id})}
+  else if(a==='acceptDemo'){const q=reqs.find(r=>r.id===+v);accept(q);go('status',{q:q.id})}
+  else if(a==='acceptReal'){const q=reqs.find(r=>r.id===+v);accept(q);toast('Accepted. Rules decided: '+OUT[q.ev.out][0]);render()}
+  else if(a==='decline'){const q=reqs.find(r=>r.id===+v);q.status='declined';note(nm(q.from),'Push',first(q.to)+' declined your request.');render()}
+  else if(a==='approveQ'){const q=reqs.find(r=>r.id===+v);approve(q,ui.persona==='approver'?apprName():S.manager);toast('Approved. Both staff notified.');ui.screen='home';ui.p={};render()}
+  else if(a==='rejectAsk'){ui.p.rej=true;render()}
+  else if(a==='rejectQ'){const[id,why]=v.split('|');reject(reqs.find(r=>r.id===+id),why,ui.persona==='approver'?apprName():S.manager);toast('Rejected');ui.screen='home';ui.p={};render()}
+  else if(a==='member')go('member',{m:+v});
+  else if(a==='station'){const[id,st]=v.split('|'),s=S.staff[+id];s.st=s.st.includes(st)?s.st.filter(x=>x!==st):[...s.st,st];render()}
+  else if(a==='page'){ui.page=v;render()}
+  else if(a==='ovr')modalOvr(reqs.find(r=>r.id===+v));
+  else if(a==='closeM')$('#modalRoot').innerHTML='';
+  else if(a==='doOvr'){const w=$('#ovrWhy').value.trim();if(!w){$('#ovrWhy').style.borderColor='#b42318';return}const q=reqs.find(r=>r.id===+v);
+    logA('Admin','Override of block',first(q.from)+' → '+first(q.to)+'. Reason: '+w,q.id);apply(q,'Admin override');$('#modalRoot').innerHTML='';toast('Override logged');render()}
+  else if(a==='addReq'){const r=$('#addRole').value,c=$('#addCred').value;(draft.req[r]=draft.req[r]||[]);if(!draft.req[r].includes(c))draft.req[r].push(c);render()}
+  else if(a==='rmReq'){const[r,c]=v.split('|');draft.req[r]=draft.req[r].filter(x=>x!==c);if(!draft.req[r].length)delete draft.req[r];render()}
+  else if(a==='discard'){draft=null;render()}
+  else if(a==='publish'){draft.ver=(cfg.ver||1)+1;cfg=draft;draft=null;logA('Admin','Rules published','Version '+cfg.ver+': cap '+cfg.cap+' h, '+(cfg.enforce==='enforce'?'enforce':'warn-only')+', auto-approve '+(cfg.auto?'on':'off'));toast('Rules v'+cfg.ver+' published');render()}
 });
-['credGate','trainGate','hoursGate','approver','auto'].forEach(id=>$(id).onchange=e=>{state.cfg[id]=e.target.checked;render()});
-$('cap').onchange=e=>{state.cfg.cap=Math.max(20,Math.min(80,+e.target.value||48));render()};
-$('reseed').onclick=()=>{state.seed++;state.reqs=gen();state.sel=null;render()};
-$('today').onclick=()=>{state.cfg={...TODAY_CFG};syncControls();render()};
-$('filters').onclick=e=>{const f=e.target.dataset.f;if(f){state.filter=f;render()}};
-$('rows').onclick=e=>{const r=e.target.closest('tr');if(r){state.sel=+r.dataset.id;render()}};
-load('freshbowl');
+document.addEventListener('change',e=>{
+  const el=e.target,a=el.dataset.act;if(!a)return;
+  if(a==='cred'){const[id,c]=el.dataset.v.split('|');S.staff[+id].c[c]=el.value||undefined;render();return}
+  if(!draft)return;
+  if(a==='enf')draft.enforce=el.value;else if(a==='alert')draft.alert=+el.value||30;else if(a==='cap')draft.cap=Math.max(20,Math.min(80,+el.value||48));
+  else if(a==='esc')draft.esc=el.value;else if(a==='tgOverride')draft.override=el.checked;else if(a==='tgTrain')draft.train=el.checked;
+  else if(a==='tgHours')draft.hours=el.checked;else if(a==='tgAuto')draft.auto=el.checked;else return;
+  render();
+});
+$('#scSel').innerHTML=Object.entries(SC).map(([k,s])=>`<option value="${k}">${s.name}</option>`).join('');
+$('#scSel').onchange=e=>{load(e.target.value);render()};
+$('#resetBtn').onclick=()=>{load(K);render();toast('Demo reset')};
+load('freshbowl');render();
 </script>
 </body>
 </html>
