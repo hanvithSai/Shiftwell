@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Shiftwell Swap Rules | clickable prototype</title>
+<title>Shiftwell Swap Rules | Prototype</title>
 <style>
 :root{--ink:#1b2430;--muted:#5f6b7a;--line:#dfe4ea;--bg:#eef1f5;--card:#fff;--accent:#1f4fd8;--accent-bg:#eaf0ff;
 --auto:#157a55;--auto-bg:#e5f5ed;--mgr:#4b5563;--mgr-bg:#eceff3;--appr:#9a5a06;--appr-bg:#fdf1d9;--block:#b42318;--block-bg:#fdeae8}
@@ -106,7 +106,7 @@ td{padding:6px 7px;border-bottom:1px solid #eef1f4;vertical-align:top}
 </head>
 <body>
 <div class="top">
-  <div class="brand">Shiftwell <span>Swap Rules · clickable prototype</span></div>
+  <div class="brand">Shiftwell <span>Swap Rules · Prototype</span></div>
   <div><label>Customer</label><select id="scSel"></select></div>
   <div><label>Release</label><select id="relSel"><option value="1">Sprint 1: credential gate</option><option value="2">Sprints 2–3: rules engine</option><option value="4" selected>Sprint 4+: full</option></select></div>
   <div class="seg" id="persona"></div>
@@ -413,7 +413,7 @@ function adminView(){
 // =============== SPEC ===============
 function specView(){
   return `<div class="spec">
-  <div class="panel"><h2>Handoff spec</h2><p class="sub">What the clickable views imply, for design and engineering. Sprints are two weeks from 19 Oct 2026: S1 credential gate, S2–3 rules engine, S4 hours cap and approver, S5 rollout, S6 buffer.</p>
+  <div class="panel"><h2>Handoff spec</h2><p class="sub">What the views imply, for design and engineering. Sprints are two weeks from 19 Oct 2026: S1 credential gate, S2–3 rules engine, S4 hours cap and approver, S5 rollout, S6 buffer.</p>
 
   <h3>1 · What changes for each role</h3>
   <table><tr><th style="width:16%">Role</th><th style="width:38%">Today</th><th>New</th></tr>
@@ -460,7 +460,14 @@ function specView(){
   <li>A rule changes while a request is pending: decide with the version live at acceptance.</li>
   <li>Week boundary and leave: assumed Mon–Sun, leave excluded. UrbanMart to confirm.</li>
   <li>Staff at more than one location: hours summed across locations.</li>
-  <li>Approver silent: no auto-escalation in v1.</li></ul></div></div></div>`;
+  <li>Approver silent: no auto-escalation in v1.</li></ul></div></div>
+  <div class="panel"><h3>6 · Success metrics and instrumentation</h3>
+  <table><tr><th style="width:18%">Level</th><th style="width:34%">Metric</th><th>Events to log</th></tr>
+  <tr><td><b>North star</b></td><td>% of swaps decided within 24 h (FreshBowl baseline 38%)</td><td><code>swap_requested</code>, <code>swap_decided</code> with timestamps</td></tr>
+  <tr><td><b>Drivers</b></td><td>Share auto-approved. Time in the exception queue.</td><td><code>decision.outcome</code>, <code>queue_entered</code>, <code>queue_decided</code></td></tr>
+  <tr><td><b>Guardrails</b></td><td>Valid staff wrongly blocked. Overrides per month. Wrong auto-approvals reported by managers.</td><td><code>override_created</code> with reason, <code>manager_flag_auto</code></td></tr>
+  <tr><td><b>Outcome</b></td><td>Expired-credential shifts worked (target 0). Overtime share of wage bill. Renewal of at-risk accounts.</td><td><code>credential_expired_assignment</code>, weekly hours snapshot</td></tr></table>
+  <p class="sub">Off-app swaps are a blind spot. Track swaps per staff member against the pre-launch baseline as a proxy.</p></div></div>`;
 }
 
 // =============== render + events ===============
