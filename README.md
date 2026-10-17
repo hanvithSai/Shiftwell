@@ -2,7 +2,7 @@
 
 Case study response for Shiftwell, a fictional shift-scheduling SaaS for multi-location businesses in India.
 
-**Recommendation:** build one swap-rules engine instead of three separate features. It checks credentials, training and weekly hours when someone is assigned a shift, auto-approves what passes, escalates exceptions and blocks unsafe assignments. Sequence: credential gate (1 sprint), rules engine (about 2), hours-cap rule (about 1), rollout, buffer. No WhatsApp approvals or custom UrbanMart build this quarter.
+**Recommendation:** build one swap-rules engine instead of three separate features. It checks credentials, training and weekly hours when someone is assigned a shift, auto-approves what passes, escalates exceptions and blocks unsafe assignments. Sequence from 19 Oct (two-week sprints): credential gate (S1), rules engine (S2–3, about 2 sprints, my estimate), hours-cap rule (S4), rollout (S5), buffer (S6). No WhatsApp approvals or custom UrbanMart build this quarter.
 
 ## Contents
 
@@ -12,8 +12,8 @@ Case study response for Shiftwell, a fictional shift-scheduling SaaS for multi-l
 | `docs/index.html` | Working prototype: clickable multi-role demo and handoff spec (GitHub Pages serves `/docs`) |
 | `case/Case_Study.pdf` | Original brief and data pack |
 | `report/report.html`, `report/figs/` | Report source and charts |
-| `scripts/` | `make_charts.py` (figures), `build_pdf.ps1` (HTML to PDF with Edge) |
+| `scripts/` | `check_numbers.py` (recomputes every number in the report), `make_charts.py` (figures), `build_pdf.ps1` (HTML to PDF with Edge) |
 
 ## Prototype
 
-Open `docs/index.html` in a browser, no build step. A clickable demo of the new swap experience for Staff and Location Manager (mobile), Regional Approver (mobile) and Admin (web), plus a **Handoff spec** tab for design and engineering: decision table, screen inventory by sprint, notifications, data model, edge cases. Pick FreshBowl, CarePoint or UrbanMart, send a swap as staff, accept as the colleague, and follow it through the manager, approver and admin views. All data is synthetic.
+Open `docs/index.html` in a browser, no build step. A clickable demo of the new swap experience for Staff and Location Manager (mobile), Regional Approver (mobile) and Admin (web), plus a **Handoff spec** tab for design and engineering: decision table, screen inventory by sprint, notifications, data model, edge cases. Pick FreshBowl, CarePoint or UrbanMart and follow the guided walkthrough, or send a swap as staff, accept as the colleague and follow it through the manager, approver and admin views. The **Release** switch shows the product as of Sprint 1, Sprints 2–3 and Sprint 4+. All data is synthetic.
