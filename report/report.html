@@ -114,9 +114,9 @@ img{width:100%;display:block}
 <h1>Build note</h1>
 <div class="meta">Deliverable 4 · <span id="wc-build"></span> words</div>
 <div id="build">
-<p>The prototype is a single HTML file with no backend. Pick FreshBowl, CarePoint or UrbanMart and it loads a synthetic night of 30 swap requests. Switch the credential gate, training check, hours cap, approver escalation and auto-approve on or off; every request gets a decision and a step-by-step trace. Credentials are checked against the shift date, not today. "Today's rules" reproduces the current product, where all 30 wait for the manager. Admin override of a block writes to an audit log.</p>
-<p>The engine is one function, so it can move into tests. AI: several tools, including ChatGPT and Claude, were used to cross-check the analysis, logic and code, alongside my own thinking and drafting. Chat links can't be shared; I'm happy to walk through the process.</p>
-<p>A real version needs from engineering: a per-role credential model with expiry; rule configuration per account; weekly-hours logic (week boundary, leave, both sides of a swap); approver designation and routing; a decision and audit log; notifications; warn-only mode and data backfill; feature flags and tests.</p>
+<p>The prototype is a clickable single-file web app with no backend. It shows the new experience for four roles: staff and location manager on mobile, a regional approver, and Admin on the web. Pick FreshBowl, CarePoint or UrbanMart, then play a swap through: staff see who can take a shift before asking, the colleague accepts, the rules engine decides, and the right person is told. Managers see only exceptions. Admin edits rules, previews the effect on past requests, publishes, and overrides blocks with a logged reason. A notifications panel shows who is told what. A handoff tab holds the decision table, screen inventory by sprint, data model and open questions.</p>
+<p>AI: several tools, including ChatGPT and Claude, were used to cross-check the analysis, logic and code, alongside my own thinking and drafting. Chat links can't be shared; I'm happy to walk through the process.</p>
+<p>A real version needs: a per-role credential model with expiry; versioned rule configuration; weekly-hours logic (week boundary, leave, both sides of a swap); approver routing; decision and audit log; notifications; warn-only mode and backfill; feature flags and tests.</p>
 </div>
 
 <h1 style="margin-top:14px">Links</h1>

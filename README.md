@@ -1,4 +1,4 @@
-# Shiftwell: Q4 2026 product recommendation
+﻿# Shiftwell: Q4 2026 product recommendation
 
 Case study response for Shiftwell, a fictional shift-scheduling SaaS for multi-location businesses in India.
 
@@ -9,18 +9,11 @@ Case study response for Shiftwell, a fictional shift-scheduling SaaS for multi-l
 | Path | What it is |
 |---|---|
 | `report/Shiftwell_Submission.pdf` | Submission: CEO memo, sales reply, assumptions, build note, links |
-| `docs/index.html` | Working prototype: swap-rules simulator (GitHub Pages serves `/docs`) |
+| `docs/index.html` | Working prototype: clickable multi-role demo and handoff spec (GitHub Pages serves `/docs`) |
 | `case/Case_Study.pdf` | Original brief and data pack |
 | `report/report.html`, `report/figs/` | Report source and charts |
 | `scripts/` | `make_charts.py` (figures), `build_pdf.ps1` (HTML to PDF with Edge) |
 
 ## Prototype
 
-Open `docs/index.html` in a browser, no build step. Pick FreshBowl, CarePoint or UrbanMart, change the rules and watch a synthetic night of 30 swap requests re-route. Click any request for its decision trace. All data is synthetic.
-
-## Rebuild the report
-
-```
-python scripts/make_charts.py
-powershell scripts/build_pdf.ps1
-```
+Open `docs/index.html` in a browser, no build step. A clickable demo of the new swap experience for Staff and Location Manager (mobile), Regional Approver (mobile) and Admin (web), plus a **Handoff spec** tab for design and engineering: decision table, screen inventory by sprint, notifications, data model, edge cases. Pick FreshBowl, CarePoint or UrbanMart, send a swap as staff, accept as the colleague, and follow it through the manager, approver and admin views. All data is synthetic.
