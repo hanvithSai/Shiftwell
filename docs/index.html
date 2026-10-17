@@ -108,7 +108,9 @@ td{padding:6px 7px;border-bottom:1px solid #eef1f4;vertical-align:top}
 <div class="top">
   <div class="brand">Shiftwell <span>Swap Rules · clickable prototype</span></div>
   <div><label>Customer</label><select id="scSel"></select></div>
+  <div><label>Release</label><select id="relSel"><option value="1">Sprint 1: credential gate</option><option value="2">Sprints 2–3: rules engine</option><option value="4" selected>Sprint 4+: full</option></select></div>
   <div class="seg" id="persona"></div>
+  <div class="sub" style="margin:0">Demo date: Fri 20 Nov 2026</div>
   <button class="btn" id="resetBtn" style="margin-left:auto">Reset demo</button>
 </div>
 <div id="app"></div>
@@ -174,11 +176,15 @@ function credState(exp,date,alert){
   const d=dd(date,exp); if(d<0) return {k:'expired',d};
   return {k:d<=alert?'soon':'ok',d};
 }
+// Release switch: which rules exist at each stage of the plan (1 = Sprint 1, 2 = Sprints 2-3, 4 = Sprint 4+)
+let REL=4;
+const E=c=>({...c,train:REL>=2&&c.train,auto:REL>=2&&c.auto,hours:REL>=4&&c.hours,esc:REL>=4?c.esc:'manager'});
 function evaluate(shift,takerId,C,hoursOverride){
+  C=E(C);
   const t=S.staff[takerId],date=iso(shift.day),checks=[];let fail=false,warn=false;
   const enforce=C.enforce==='enforce';
-  if(t.r!==shift.role){fail=true;checks.push({s:'fail',t:'Role',d:t.r+' cannot cover a '+shift.role+' shift'})}
-  const clash=S.shifts.find(x=>x.owner===takerId&&x.day===shift.day&&x.id!==shift.id);
+  if(REL>=2&&t.r!==shift.role){fail=true;checks.push({s:'fail',t:'Role',d:t.r+' cannot cover a '+shift.role+' shift'})}
+  const clash=REL>=2&&S.shifts.find(x=>x.owner===takerId&&x.day===shift.day&&x.id!==shift.id);
   if(clash){fail=true;checks.push({s:'fail',t:'Schedule',d:'Already working '+hh(clash.start)+'–'+hh(clash.start+clash.len)+' that day'})}
   (C.req[t.r]||[]).forEach(n=>{
     const c=credState(t.c[n],date,C.alert);
@@ -200,7 +206,7 @@ function evaluate(shift,takerId,C,hoursOverride){
   else if(warn){out='mgr';reason=checks.filter(c=>c.s==='warn'&&c.d.includes('warn-only')).map(c=>c.t).join(', ')+' not valid (warn-only mode)'}
   else if(C.train&&!trained){out='mgr';reason='Not verified for '+shift.station}
   else if(C.auto){out='auto';reason='All checks passed'}
-  else{out='mgr';reason='Auto-approval is off'}
+  else{out='mgr';reason=REL<2?'Manual approval, as today':'Auto-approval is off'}
   return {out,reason,checks,proj,trained};
 }
 const apprName=()=>S.approver==='—'?'regional approver':S.approver;
@@ -286,14 +292,14 @@ function staffView(){
   }else if(sc==='pick'){
     const sh=S.shifts[ui.p.shift];
     const opts=S.staff.filter(x=>x.id!==me&&x.r===sh.role).map(x=>({x,ev:evaluate(sh,x.id,cfg)})).sort((a,b)=>(a.ev.out==='block')-(b.ev.out==='block')||['auto','mgr','appr'].indexOf(a.ev.out)-['auto','mgr','appr'].indexOf(b.ev.out));
-    html=phone('Who can take this shift?',shiftTxt(sh),`<div class="sub" style="margin-bottom:8px">Checked against rules before you ask. You will not wait a day to find out.</div>`+opts.map(({x,ev})=>`
-      <button class="pick ${ev.out==='block'?'dis':''}" ${ev.out==='block'?'disabled':`data-act="confirm" data-v="${x.id}"`}><div class="row"><div><div class="t">${x.n}</div><div class="s">${x.h} h this week</div></div>${outChip(ev.out)}</div>
-      ${ev.out==='auto'?'':`<div class="sub">${ev.out==='block'?'Cannot take it: ':'Why: '}${ev.reason}</div>`}</button>`).join(''),NAV,true);
+    html=phone('Who can take this shift?',shiftTxt(sh),`<div class="sub" style="margin-bottom:8px">${REL>=2?'Checked against rules before you ask. You will not wait a day to find out.':'Sprint 1 release: the certificate check runs after your colleague accepts.'}</div>`+opts.map(({x,ev})=>`
+      <button class="pick ${REL>=2&&ev.out==='block'?'dis':''}" ${REL>=2&&ev.out==='block'?'disabled':`data-act="confirm" data-v="${x.id}"`}><div class="row"><div><div class="t">${x.n}</div><div class="s">${x.h} h this week</div></div>${REL>=2?outChip(ev.out):''}</div>
+      ${REL<2||ev.out==='auto'?'':`<div class="sub">${ev.out==='block'?'Cannot take it: ':'Why: '}${ev.reason}</div>`}</button>`).join(''),NAV,true);
     n=notes('Eligibility shown before sending','Sprint 2–3',['This is the biggest change for staff. Today they agree on WhatsApp, then wait. Here the app tells them in advance who can take the shift, and what will happen.','Blocked colleagues are greyed out with the reason in plain words (Sprint 1 covers certificates).'],['Sorted: instant approval first, then needs a person, then not allowed','Over-cap colleagues stay selectable; they route to an approver (Sprint 4)']);
   }else if(sc==='confirm'){
     const sh=S.shifts[ui.p.shift],to=ui.p.to,ev=evaluate(sh,to,cfg);
-    const next={auto:`When ${first(to)} accepts, the swap is approved instantly. No manager step.`,mgr:`When ${first(to)} accepts, it goes to ${S.manager} to decide. Reason: ${ev.reason}.`,appr:`When ${first(to)} accepts, it goes to ${apprName()} to decide. Reason: ${ev.reason}.`}[ev.out];
-    html=phone('Confirm request','',`<div class="card"><div class="s">You give</div><div class="t">${shiftTxt(sh)}</div><div class="s" style="margin-top:8px">To</div><div class="t">${nm(to)} ${outChip(ev.out)}</div></div>
+    const next=REL<2?`When ${first(to)} accepts, ${S.manager} reviews it. Required certificates are checked at that point.`:{auto:`When ${first(to)} accepts, the swap is approved instantly. No manager step.`,mgr:`When ${first(to)} accepts, it goes to ${S.manager} to decide. Reason: ${ev.reason}.`,appr:`When ${first(to)} accepts, it goes to ${apprName()} to decide. Reason: ${ev.reason}.`}[ev.out];
+    html=phone('Confirm request','',`<div class="card"><div class="s">You give</div><div class="t">${shiftTxt(sh)}</div><div class="s" style="margin-top:8px">To</div><div class="t">${nm(to)} ${REL>=2?outChip(ev.out):''}</div></div>
       <div class="card"><div class="t">What happens next</div><div class="s" style="margin-top:4px">${next}</div></div><button class="btn pri full" data-act="send">Send request to ${first(to)}</button>`,NAV,true);
     n=notes('Say what happens next, before the tap','Sprint 2–3',['Setting expectations removes the follow-up question "did my manager see it?". Copy changes with the predicted outcome.']);
   }else if(sc==='status'){
@@ -323,7 +329,7 @@ function mgrView(role){
   const NAV=nav(items,sc==='home'?tab:'');
   let n,html;
   const card=q=>{const sh=S.shifts[q.shift];return `<div class="card"><div class="row"><div><div class="t">${first(q.to)} takes ${first(q.from)}'s shift</div><div class="s">${shiftTxt(sh)}</div></div></div>
-    <div style="margin:6px 0">${chip(isA?'c-appr':'c-mgr',q.ev.reason)}</div>${hoursBar(q.snap,sh.len,cfg.cap)}
+    <div style="margin:6px 0">${chip(isA?'c-appr':'c-mgr',q.ev.reason)}</div>${E(cfg).hours?hoursBar(q.snap,sh.len,cfg.cap):""}
     <div class="btns"><button class="btn" data-act="open" data-v="${q.id}">Review</button><button class="btn ok" data-act="approveQ" data-v="${q.id}">Approve</button></div></div>`};
   if(sc==='home'&&tab==='q'){
     html=phone(isA?'Approvals':'Needs you',(isA?S.loc+' + 2 more':S.loc)+' · '+who,
@@ -346,7 +352,7 @@ function mgrView(role){
   }else{ // detail
     const q=reqs.find(r=>r.id===ui.p.q),sh=S.shifts[q.shift],act=['mgr','appr'].includes(q.status);
     html=phone('Review swap',shiftTxt(sh),`<div class="card"><div class="t">${nm(q.from)} → ${nm(q.to)}</div><div class="s">${q.t}</div></div>
-      <div class="card"><div class="t" style="margin-bottom:4px">Why it needs you</div>${chip(isA?'c-appr':'c-mgr',q.ev.reason)}<div style="margin-top:8px">${checksHtml(q.ev)}</div>${hoursBar(q.snap,sh.len,cfg.cap)}</div>
+      <div class="card"><div class="t" style="margin-bottom:4px">Why it needs you</div>${chip(isA?'c-appr':'c-mgr',q.ev.reason)}<div style="margin-top:8px">${checksHtml(q.ev)}</div>${E(cfg).hours?hoursBar(q.snap,sh.len,cfg.cap):""}</div>
       ${act?(ui.p.rej?`<div class="sub" style="margin-bottom:6px">Reason for rejecting (staff will see it)</div>${['Coverage gap','Skill mismatch','Overtime budget','Other'].map(r=>`<button class="stbtn" data-act="rejectQ" data-v="${q.id}|${r}">${r}</button>`).join('')}`:`<div class="btns"><button class="btn bad" data-act="rejectAsk">Reject</button><button class="btn ok" data-act="approveQ" data-v="${q.id}">Approve</button></div>`):`<div class="banner ${q.status==='approved'?'ban-ok':'ban-bad'}">${statusChip(q)} ${q.status==='blocked'?'Admin can override in the web console.':''}</div>`}`,NAV,true);
     n=notes('Decision trace on every request','Sprint 2–3',['Managers decide with the same checks they run by hand today (training, overtime, credentials), now laid out in one place.'],['Check dots: green pass, amber needs a person, red fails','Reject reasons are fixed chips: fast on mobile and reportable']);
   }
@@ -384,11 +390,11 @@ function adminView(){
       <div class="f"><label>Enforcement</label><label><input type="radio" name="enf" value="warn" ${d.enforce==='warn'?'checked':''} data-act="enf"> Warn only (14-day backfill)</label><label><input type="radio" name="enf" value="enforce" ${d.enforce==='enforce'?'checked':''} data-act="enf"> Enforce (block)</label></div>
       <div class="f"><label>Alert staff and managers</label><input type="number" id="alertD" value="${d.alert}" min="7" max="90" data-act="alert"><label>days before expiry</label></div>
       <div class="f"><label class="tg"><input type="checkbox" ${d.override?'checked':''} data-act="tgOverride"> Allow Admin override of blocks (always logged)</label></div></div>
-     <div class="sec"><h3>2 · Training check <span class="sp">Sprint 2–3</span></h3><div class="f"><label class="tg"><input type="checkbox" ${d.train?'checked':''} data-act="tgTrain"> Send to manager if the person is not trained for the station</label></div></div>
-     <div class="sec"><h3>3 · Weekly hours cap <span class="sp">Sprint 4</span></h3><div class="f"><label class="tg"><input type="checkbox" ${d.hours?'checked':''} data-act="tgHours"> Require approval above</label><input type="number" id="capIn" value="${d.cap}" min="20" max="80" data-act="cap"><label>hours a week</label></div>
-      <div class="f"><label>Escalate to</label><select data-act="esc"><option value="manager" ${d.esc==='manager'?'selected':''}>Location manager</option><option value="approver" ${d.esc==='approver'?'selected':''}>Regional approver${S.approver!=='—'?' ('+S.approver+')':''}</option></select></div>
+     <div class="sec"><h3>2 · Training check <span class="sp">Sprint 2–3</span>${REL<2?" <span class=\"sub\">Not in this release</span>":""}</h3><div class="f"><label class="tg"><input type="checkbox" ${d.train?'checked':''} data-act="tgTrain" ${REL<2?"disabled":""}> Send to manager if the person is not trained for the station</label></div></div>
+     <div class="sec"><h3>3 · Weekly hours cap <span class="sp">Sprint 4</span>${REL<4?" <span class=\"sub\">Not in this release</span>":""}</h3><div class="f"><label class="tg"><input type="checkbox" ${d.hours?'checked':''} data-act="tgHours" ${REL<4?"disabled":""}> Require approval above</label><input type="number" id="capIn" value="${d.cap}" min="20" max="80" data-act="cap" ${REL<4?"disabled":""}><label>hours a week</label></div>
+      <div class="f"><label>Escalate to</label><select data-act="esc" ${REL<4?"disabled":""}><option value="manager" ${d.esc==='manager'?'selected':''}>Location manager</option><option value="approver" ${d.esc==='approver'?'selected':''}>Regional approver${S.approver!=='—'?' ('+S.approver+')':''}</option></select></div>
       <p class="h">Week runs Monday to Sunday and counts scheduled hours. Leave is excluded.</p></div>
-     <div class="sec"><h3>4 · Auto-approval <span class="sp">Sprint 2–3</span></h3><div class="f"><label class="tg"><input type="checkbox" ${d.auto?'checked':''} data-act="tgAuto"> Approve instantly when every check passes</label></div></div></div>
+     <div class="sec"><h3>4 · Auto-approval <span class="sp">Sprint 2–3</span>${REL<2?" <span class=\"sub\">Not in this release</span>":""}</h3><div class="f"><label class="tg"><input type="checkbox" ${d.auto?'checked':''} data-act="tgAuto" ${REL<2?"disabled":""}> Approve instantly when every check passes</label></div></div></div>
      <div><div class="sec impact"><h3>Impact preview</h3><p class="h">This draft applied to the ${base.length} requests decided in this demo.</p>
       <div class="imp"><div style="background:var(--auto-bg);color:var(--auto)"><b>${pv.auto}</b><span>Instant</span></div><div style="background:var(--mgr-bg);color:var(--mgr)"><b>${pv.mgr}</b><span>Manager</span></div><div style="background:var(--appr-bg);color:var(--appr)"><b>${pv.appr}</b><span>Approver</span></div><div style="background:var(--block-bg);color:var(--block)"><b>${pv.block}</b><span>Blocked</span></div></div>
       <p class="h">Today every one of these waits for the location manager.</p>
@@ -407,47 +413,54 @@ function adminView(){
 // =============== SPEC ===============
 function specView(){
   return `<div class="spec">
-  <div class="panel"><h2>Design and dev handoff</h2><p class="sub">Everything the clickable views imply, in one place. Sprint tags match the plan: S1 credential gate, S2–3 rules engine, S4 hours cap and approver, S5 rollout, S6 buffer. Sprints are two weeks, starting 19 Oct 2026.</p>
-  <h3>1 · End-to-end flow</h3>
-  <div class="flow"><div class="fb"><b>Staff</b>Picks shift, sees who is eligible</div><div class="ar">→</div><div class="fb"><b>Colleague</b>Accepts in app (24 h expiry)</div><div class="ar">→</div><div class="fb eng"><b>Rules engine</b>Runs at decision time, stores checks and rule version</div><div class="ar">→</div>
-  <div class="fb"><b>One of four outcomes</b>Auto · Manager · Approver · Blocked</div><div class="ar">→</div><div class="fb"><b>Notify + audit</b>Push to everyone affected, event logged</div></div>
-  <h3>2 · Decision rules (evaluated in this order)</h3>
-  <table><tr><th>#</th><th>Check</th><th>Result</th><th>Staff sees</th><th>Ships</th></tr>
-  <tr><td>1</td><td>Role mismatch or clash with another shift that day</td><td>Blocked</td><td>"Cannot take it: already working 08:00–16:00 that day"</td><td>S2–3</td></tr>
-  <tr><td>2</td><td>Required credential missing or expired <b>on the shift date</b></td><td>Blocked (enforce) · Manager (warn-only)</td><td>"BLS: expired 25 days before the shift"</td><td>S1</td></tr>
-  <tr><td>3</td><td>Projected weekly hours above cap</td><td>Approver, or Manager if no approver set</td><td>"Sent to Sunita. 54 h is above the 48 h cap"</td><td>S4</td></tr>
-  <tr><td>4</td><td>Not trained for station</td><td>Manager</td><td>"Sent to Rekha. Not verified for Grill"</td><td>S2–3</td></tr>
-  <tr><td>5</td><td>All pass</td><td>Auto-approve (or Manager if auto is off)</td><td>"Approved instantly"</td><td>S2–3</td></tr></table>
-  <p class="sub">Missing data never passes silently: missing credential blocks after the warn-only period, unknown training goes to a person.</p></div>
+  <div class="panel"><h2>Handoff spec</h2><p class="sub">What the clickable views imply, for design and engineering. Sprints are two weeks from 19 Oct 2026: S1 credential gate, S2–3 rules engine, S4 hours cap and approver, S5 rollout, S6 buffer.</p>
 
-  <div class="grid2"><div class="panel"><h3>3 · Screen inventory</h3><table><tr><th>Surface</th><th>Screens</th><th>Ships</th></tr>
-  <tr><td>Staff app</td><td>Home with credential banner · Colleague picker with pre-check · Confirm · Status · Swaps inbox</td><td>S1 banner, S2–3 rest</td></tr>
-  <tr><td>Manager app</td><td>Needs you · Review · Activity · Team · Edit credentials and stations</td><td>S1 Team, S2–3 rest</td></tr>
-  <tr><td>Approver (app)</td><td>Approvals · Review · Activity</td><td>S4</td></tr>
-  <tr><td>Admin web</td><td>Overview · Rules with impact preview · Audit log · Override dialog</td><td>S1 gate, audit, override; S2–4 rules; S5 preview and flag</td></tr></table>
-  <h3>States to design for every screen</h3><ul class="sub"><li>Loading and offline (queue cached, actions retry)</li><li>Empty ("All clear", no requests yet)</li><li>Error on send, with retry</li><li>Colleague did not answer in 24 h: request expires, requester notified</li></ul></div>
-  <div class="panel"><h3>4 · Notifications</h3><table><tr><th>Event</th><th>Who</th></tr>
-  <tr><td>Swap requested</td><td>Colleague</td></tr><tr><td>Auto-approved / approved</td><td>Both staff (manager sees it in Activity, no push)</td></tr>
-  <tr><td>Needs a decision</td><td>Manager or approver; requester told who has it</td></tr>
-  <tr><td>Blocked</td><td>Requester (reason); credential owner (renew)</td></tr><tr><td>Rejected</td><td>Both staff, with reason</td></tr>
-  <tr><td>Credential expiring</td><td>Staff and manager, at 30 days (configurable)</td></tr></table>
-  <p class="sub">Delivery goes through one channel interface. Push and SMS first; WhatsApp is a future adapter, not a redesign.</p></div></div>
+  <h3>1 · What changes for each role</h3>
+  <table><tr><th style="width:16%">Role</th><th style="width:38%">Today</th><th>New</th></tr>
+  <tr><td><b>Staff</b></td><td>Agree a swap on WhatsApp, request it in the app, wait about a day. Half the time they skip the app.</td><td>See who is eligible before asking. Decision in seconds when rules pass. Clear reason and next step when they do not.</td></tr>
+  <tr><td><b>Location manager</b></td><td>Approves every swap, mostly without thinking. Checks training, overtime and certificates by hand, sometimes in Excel.</td><td>Sees only exceptions, each with the reason. Credentials and training live in the app.</td></tr>
+  <tr><td><b>Regional approver</b></td><td>Does not exist.</td><td>Sees only swaps above the hours cap. Same card and actions as the manager.</td></tr>
+  <tr><td><b>Admin</b></td><td>Reads reports. No control over how swaps are decided.</td><td>Sets the rules, previews their effect, overrides blocks with a reason, shows auditors the log.</td></tr></table>
 
-  <div class="grid2"><div class="panel"><h3>5 · Data model (v1)</h3><table><tr><th>Entity</th><th>Key fields</th></tr>
+  <h3>2 · Release scope</h3>
+  <table><tr><th style="width:15%">Release</th><th style="width:44%">Live for users</th><th>Not yet</th></tr>
+  <tr><td><b>S1</b> · Oct 19–30</td><td>Credential field per staff and role. Block at scheduling. Swaps into an expired certificate cannot be approved. Staff and manager expiry alerts. Admin override with a basic log. Warn-only mode, then enforce.</td><td>Pre-checks for staff, auto-approval, hours cap.</td></tr>
+  <tr><td><b>S2–3</b> · Nov 2–27</td><td>Rules engine: role, clash, credential, training. Colleague picker with eligibility. Auto-approval. Exception queue. Decision log. FreshBowl pilot.</td><td>Hours cap, approver.</td></tr>
+  <tr><td><b>S4</b> · Nov 30–Dec 11</td><td>Hours cap rule, regional approver inbox, escalation setting. Roster build shows a warning above the cap.</td><td>Approval at roster publish (stretch).</td></tr>
+  <tr><td><b>S5</b> · Dec 14–25</td><td>Rule preview, versioned publish, feature flag per account, hardening and manager training.</td><td></td></tr></table>
+  <p class="sub">Use the Release switch at the top to see the product at each stage. The 1-sprint estimate for S1 covers the field and the scheduling block. Swap-time enforcement for every swap arrives with the engine in S2–3.</p>
+
+  <h3>3 · Decision rules, evaluated in this order</h3>
+  <table><tr><th>#</th><th>Check</th><th>Result</th><th>Staff sees</th><th>From</th></tr>
+  <tr><td>1</td><td>Role mismatch, or clash with another shift that day</td><td>Blocked</td><td>"Already working 08:00–16:00 that day"</td><td>S2–3</td></tr>
+  <tr><td>2</td><td>Required credential missing or expired <b>on the shift date</b></td><td>Blocked when enforced; manager when warn-only</td><td>"BLS: expired 25 days before the shift"</td><td>S1</td></tr>
+  <tr><td>3</td><td>Projected weekly hours above cap</td><td>Approver, or manager if none is set</td><td>"Sent to Sunita. 54 h is above the 48 h cap"</td><td>S4</td></tr>
+  <tr><td>4</td><td>Not trained for the station</td><td>Manager</td><td>"Not verified for Grill"</td><td>S2–3</td></tr>
+  <tr><td>5</td><td>All pass</td><td>Auto-approve; manager if auto is off</td><td>"Approved instantly"</td><td>S2–3</td></tr></table>
+  <p class="sub">Missing data never passes silently. A missing credential blocks once enforced. Unknown training goes to a person.</p></div>
+
+  <div class="grid2"><div class="panel"><h3>4 · Notifications</h3><table><tr><th>Event</th><th>Who is told</th></tr>
+  <tr><td>Swap requested</td><td>Colleague</td></tr><tr><td>Approved, including auto</td><td>Both staff. Manager sees it in Activity, no push.</td></tr>
+  <tr><td>Needs a decision</td><td>Manager or approver. Requester is told who has it.</td></tr>
+  <tr><td>Blocked</td><td>Requester (reason). Credential owner (renew).</td></tr><tr><td>Rejected</td><td>Both staff, with the reason</td></tr>
+  <tr><td>Credential expiring</td><td>Staff and manager, 30 days before (configurable)</td></tr></table>
+  <p class="sub">All sends go through one channel interface: push and SMS first. WhatsApp becomes another adapter, not a redesign.</p>
+  <h3>States to design on every screen</h3><ul class="sub"><li>Loading and offline (queue cached, actions retry)</li><li>Empty ("All clear", no requests yet)</li><li>Send error, with retry</li><li>Colleague silent for 24 h: request expires, requester told</li></ul></div>
+
+  <div class="panel"><h3>5 · Data model (v1)</h3><table><tr><th>Entity</th><th>Key fields</th></tr>
   <tr><td><code>Credential</code></td><td>staff_id, type, expiry_date, updated_by</td></tr>
   <tr><td><code>RoleRequirement</code></td><td>account_id, role, credential_type</td></tr>
-  <tr><td><code>RuleSet</code></td><td>account_id, version, enforce_mode, alert_days, train_gate, hours_cap, escalate_to, auto_approve, published_at</td></tr>
+  <tr><td><code>RuleSet</code></td><td>account_id, version, enforce_mode, alert_days, train_gate, hours_cap, escalate_to, auto_approve</td></tr>
   <tr><td><code>SwapRequest</code></td><td>shift_id, from_id, to_id, status, accepted_at, decided_by</td></tr>
   <tr><td><code>Decision</code></td><td>request_id, rule_version, checks[], outcome, actor, reason</td></tr>
-  <tr><td><code>Approver</code></td><td>account_id, user_id, location_ids[]</td></tr></table></div>
-  <div class="panel"><h3>6 · Edge cases and open questions</h3><ul class="sub">
-  <li>A swap changes hours for both people. The prototype checks the taker; production checks both sides.</li>
-  <li>Rule changed while a request is pending: decide with the version live at acceptance time.</li>
-  <li>Week boundary and leave treatment: assumed Mon–Sun, leave excluded. UrbanMart to confirm.</li>
-  <li>Staff in more than one location: hours are summed across locations.</li>
-  <li>Approver does not respond: v1 has no auto-escalation. Revisit with pilot data.</li>
-  <li>Override: Admin only, reason mandatory, notifies both staff, appears in audit.</li>
-  <li>Engineering to confirm: estimate for the engine (about 2 sprints) and whether notifications reuse existing infrastructure.</li></ul></div></div></div>`;
+  <tr><td><code>Approver</code></td><td>account_id, user_id, location_ids[]</td></tr></table>
+  <h3>Open questions for Engineering</h3><ul class="sub">
+  <li>Engine estimate (planning figure: 2 sprints, range 1.5 to 3) and reuse of existing notification infrastructure.</li>
+  <li>A swap changes hours for both people. The demo checks the taker; production checks both.</li>
+  <li>A rule changes while a request is pending: decide with the version live at acceptance.</li>
+  <li>Week boundary and leave: assumed Mon–Sun, leave excluded. UrbanMart to confirm.</li>
+  <li>Staff at more than one location: hours summed across locations.</li>
+  <li>Approver silent: no auto-escalation in v1.</li></ul></div></div></div>`;
 }
 
 // =============== render + events ===============
@@ -455,7 +468,24 @@ const PERSONAS=[['staff','Staff · mobile'],['manager','Location manager · mobi
 function render(){
   $('#persona').innerHTML=PERSONAS.map(p=>`<button class="${ui.persona===p[0]?'on':''}" data-act="persona" data-v="${p[0]}">${p[1]}</button>`).join('');
   $('#app').innerHTML=ui.persona==='staff'?staffView():ui.persona==='manager'?mgrView('manager'):ui.persona==='approver'?mgrView('approver'):ui.persona==='admin'?adminView():specView();
+  if(ui.persona!=='spec'){const h=document.querySelector('.stage>div:first-child');if(h)h.insertAdjacentHTML('afterbegin',walk())}
   const as=$('#asSel');if(as)as.onchange=e=>{ui.staff=+e.target.value;ui.screen='home';render()};
+}
+const WALK={
+ freshbowl:[['Staff: pick a colleague for the Wed Wok shift','staff',{screen:'pick',p:{shift:1}},'Meera and Arjun clear instantly. Karthik (45 h) and Ravi (not trained on Wok) need the manager.'],
+   ['Manager: only exceptions reach the queue','manager',{tab:'q'},'The banner counts what rules cleared. Approve or review a card.'],
+   ['Admin: change a rule, preview, publish','admin',{page:'rules'},'Lower the hours cap and watch the impact preview move before publishing.'],
+   ['Handoff spec','spec',{},'Decision table, release scope, data model.']],
+ carepoint:[['Staff: certificate banner before it lapses','staff',{screen:'home'},'Ananya\'s BLS expires in 12 days. Warned early, not caught by an auditor.'],
+   ['Staff: expired colleagues cannot be picked','staff',{screen:'pick',p:{shift:1}},'Reasons are in plain words. Try the Sprint 1 release to see the check happen later.'],
+   ['Admin: override a block, with a reason','admin',{page:'overview'},'Only Admin can override. The reason goes to the audit log.'],
+   ['Admin: audit log','admin',{page:'audit'},'The answer to "show us the control".']],
+ urbanmart:[['Staff: pick a colleague who would go over 48 h','staff',{screen:'pick',p:{shift:1}},'Meera would reach 54 h. Send the request and use the demo shortcut to accept.'],
+   ['Approver: only over-cap swaps arrive','approver',{tab:'q'},'Sunita sees the hours bar and approves in one tap.'],
+   ['Admin: set the cap and who escalates to','admin',{page:'rules'},'48 h is a setting, not a custom build.'],
+   ['Handoff spec','spec',{},'Release scope shows this arrives in Sprint 4.']]};
+function walk(){
+  return `<div class="panel" style="margin-bottom:12px"><h4>Guided walkthrough · ${S.name}</h4>${WALK[K].map((w,i)=>`<button class="btn" style="width:100%;text-align:left;margin-bottom:6px" data-act="walk" data-v="${i}"><b>${i+1}.</b> ${w[0]}<div class="sub" style="font-weight:400">${w[3]}</div></button>`).join('')}</div>`;
 }
 function go(screen,p){ui.screen=screen;ui.p=p||{};render()}
 function modalOvr(q){
@@ -467,7 +497,8 @@ document.addEventListener('click',e=>{
   const el=e.target.closest('[data-act]');if(!el||el.tagName==='INPUT'&&el.type!=='button')return;
   const a=el.dataset.act,v=el.dataset.v;
   if(el.disabled)return;
-  if(a==='persona'){ui.persona=v;ui.screen='home';ui.p={};ui.tab='q';render()}
+  if(a==='walk'){const w=WALK[K][+v];ui.staff=0;ui.persona=w[1];ui.screen=w[2].screen||'home';ui.p=w[2].p||{};ui.tab=w[2].tab||'q';if(w[2].page)ui.page=w[2].page;render()}
+  else if(a==='persona'){ui.persona=v;ui.screen='home';ui.p={};ui.tab='q';render()}
   else if(a==='tab'){if(v==='x')return;ui.screen='home';ui.tab=v;ui.p={};if(v==='home'||v==='swaps'){ui.screen=v}render()}
   else if(a==='back'){ui.screen=ui.persona==='staff'?'home':'home';ui.p={};render()}
   else if(a==='pick')go('pick',{shift:+v});
@@ -503,6 +534,7 @@ document.addEventListener('change',e=>{
 });
 $('#scSel').innerHTML=Object.entries(SC).map(([k,s])=>`<option value="${k}">${s.name}</option>`).join('');
 $('#scSel').onchange=e=>{load(e.target.value);render()};
+$('#relSel').onchange=e=>{REL=+e.target.value;load(K);render();toast('Showing the product as of '+e.target.selectedOptions[0].text)};
 $('#resetBtn').onclick=()=>{load(K);render();toast('Demo reset')};
 load('freshbowl');render();
 </script>
