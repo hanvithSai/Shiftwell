@@ -23,11 +23,20 @@ img{display:block;margin:0 auto}
 .muted{color:#5f6b7a}.small{font-size:8.6pt}
 .g{color:#157a55;font-weight:700}.a{color:#9a5a06;font-weight:700}.r{color:#b42318;font-weight:700}
 .rec td{background:#eef3ff}
+.band{border-bottom:2px solid #1b2430;padding-bottom:6px;margin-bottom:8px}
+.kicker{font-size:8pt;letter-spacing:.14em;color:#1f4fd8;font-weight:700}
+.title{font-size:19pt;font-weight:700;line-height:1.15}
+.subt{font-size:8.8pt;color:#5f6b7a;margin-top:2px}
+.tag{display:inline-block;font-size:7.4pt;font-weight:600;color:#1f4fd8;background:#eaf0ff;border-radius:9px;padding:0 6px;margin-left:5px;vertical-align:1px;letter-spacing:0}
+.lbl{font-size:8pt;color:#5f6b7a;text-transform:uppercase;letter-spacing:.08em;margin:6px 0 1px}
+.v-s{color:#157a55;font-weight:700}.v-p{color:#9a5a06;font-weight:700}.v-w{color:#b42318;font-weight:700}
 .foot{position:fixed;bottom:-9mm;left:0;right:0;font-size:7.5pt;color:#8a94a3;display:flex;justify-content:space-between}
 </style></head><body>
 
 
 <!-- ============ DELIVERABLE 1: MEMO (2 pages) ============ -->
+<div class="band"><div class="kicker">SHIFTWELL · PRODUCT CASE SUBMISSION</div><div class="title">Q4 2026 Product Recommendation</div><div class="subt">Memo to CEO · Reply to Sales · Assumptions · Build note · Prototype link · Supporting analysis</div></div>
+<div class="lbl">Deliverable 1 · Recommendation memo</div>
 <h1>Build one swap-rules engine this quarter; defer WhatsApp and the custom overtime build</h1>
 <div class="meta"><b>To:</b> CEO &nbsp;·&nbsp; <b>From:</b> Product &nbsp;·&nbsp; <b>17 Oct 2026</b> &nbsp;·&nbsp; <b>Decision needed:</b> approve the sequence below. Engineering validates one estimate next week.</div>
 
@@ -39,7 +48,7 @@ img{display:block;margin:0 auto}
 
 <h2><span>1</span> The three requests share one cause: manual, slow, unchecked approval</h2>
 <table>
-<tr><th style="width:14%">Account</th><th style="width:20%">Asked for</th><th style="width:22%">Needs</th><th>Evidence</th></tr>
+<tr><th style="width:14%">Account</th><th style="width:20%">Asked for</th><th style="width:22%">Job to be done</th><th>Evidence</th></tr>
 <tr><td><b>FreshBowl</b><br>₹84L · Jan 27<br><span class="r">At risk</span></td><td>Swaps requested and approved on WhatsApp</td><td>A decision in minutes, with the same checks</td><td>38% approved in 24 h. Staff agree a swap on WhatsApp in 10 minutes, then wait a day; half skip the app. The manager approves "almost all", checking only training and overtime.</td></tr>
 <tr><td><b>CarePoint</b><br>₹60L · Dec 26<br><span class="r">At risk</span></td><td>Block expired certificates</td><td>Same: an automatic control, not a manager's Excel</td><td>Audit found two shifts covered by lapsed BLS; one more finding means a penalty. Ask and need match.</td></tr>
 <tr><td><b>UrbanMart</b><br>₹110L · Aug 27<br><span class="g">Healthy</span></td><td>Regional approval above 48 h</td><td>Overtime control (9% of wage bill) without more approvals</td><td>Already 36% of swaps wait over a day. A blanket approval step adds load; escalate exceptions only.</td></tr>
@@ -83,7 +92,7 @@ img{display:block;margin:0 auto}
 <tr><td><b>FreshBowl</b></td><td>Swaps that pass training and overtime checks are approved instantly; the rest reach the manager. Pilot from late November in stores you choose. WhatsApp is reviewed after the pilot, with real numbers.</td></tr>
 <tr><td><b>UrbanMart</b></td><td>The 48-hour rule arrives as a setting, targeted 11 December once Engineering confirms. Please help define the week boundary and your approvers.</td></tr>
 <tr><td><b>FitZone, Brew &amp; Co</b></td><td>Renewals come first. Customer Success calls this week with a place in the pilot. Any commercial offer is your call.</td></tr></table>
-<p class="small"><b>Measures</b> (weekly, per account): % decided in 24 h, share auto-approved, off-app swaps, blocks and overrides, overtime share of wage bill. <b>Risks:</b> bad credential data blocking valid staff (warn-only first); a wrong auto-approval (logged; unknown training goes to a person); the engine estimate.</p>
+<p class="small"><b>Measures</b> North star: % of swaps decided in 24 h. Drivers: share auto-approved. Guardrails: valid staff wrongly blocked, overrides, wrong approvals. Outcome: renewals, overtime share of wage bill. <b>Risks</b> FreshBowl renews on a WhatsApp checklist; bad credential data blocks valid staff; the engine runs past 3 sprints. Mitigations are in the supporting analysis (A4).</p>
 
 <!-- ============ PAGE 3 ============ -->
 <div class="pb"></div>
@@ -121,7 +130,7 @@ img{display:block;margin:0 auto}
 <h1>Build note</h1>
 <div class="meta">Deliverable 4 · <span id="wc-build"></span> words</div>
 <div id="build">
-<p>The prototype is a clickable single-file web app with no backend. It shows the new experience for four roles: staff and location manager on mobile, a regional approver, and Admin on the web. Pick FreshBowl, CarePoint or UrbanMart and follow a guided walkthrough: staff see who can take a shift before asking, the rules engine decides, and the right person is told. Managers see only exceptions. Admin edits rules, previews the effect on past requests, publishes, and overrides blocks with a logged reason. A release switch shows the product as of Sprint 1, 2–3 and 4+. A handoff tab holds the decision table, data model and open questions.</p>
+<p>The prototype is a single-file web app with no backend. It shows the new experience for four roles: staff and location manager on mobile, a regional approver, and Admin on the web. Pick FreshBowl, CarePoint or UrbanMart and follow a guided walkthrough: staff see who can take a shift before asking, the rules engine decides, and the right person is told. Managers see only exceptions. Admin edits rules, previews the effect on past requests, publishes, and overrides blocks with a logged reason. A release switch shows the product as of Sprint 1, 2–3 and 4+. A handoff tab holds the decision table, data model and open questions.</p>
 <p>AI: several tools, including ChatGPT and Claude, were used to cross-check the analysis, logic and code, alongside my own thinking and drafting. Chat links can't be shared; I'm happy to walk through the process.</p>
 <p>A real version needs: a per-role credential model with expiry; versioned rules; weekly-hours logic (week boundary, leave, both sides of a swap); approver routing; decision and audit log; notifications; warn-only mode; feature flags and tests.</p>
 </div>
@@ -134,6 +143,58 @@ img{display:block;margin:0 auto}
 <tr><td><b>AI chat link</b></td><td>Not shareable. Multiple AI tools were used for cross-validation; available to walk through in the interview.</td></tr>
 </table>
 
+
+<!-- ============ APPENDIX ============ -->
+<div class="pb"></div>
+<div class="band"><div class="kicker">APPENDIX</div><div class="title" style="font-size:15pt">Supporting analysis</div><div class="subt">The evidence behind the diagnosis, the sequence and the risks.</div></div>
+
+<h3>A1 · Why is ₹220L at risk by March 2027? Four causes tested</h3>
+<table>
+<tr><th style="width:19%">Hypothesis</th><th style="width:29%">If true, we would see</th><th>What the data shows</th><th style="width:11%">Verdict</th></tr>
+<tr><td><b>H1</b> Competitor feature gap (WhatsApp)</td><td>Lost accounts cite it; at-risk accounts ask for it</td><td>One of four losses (₹16L of ₹80L). GreenLeaf's exit call says it was approvals. Only FreshBowl's Ops Director asks.</td><td class="v-w">Weak cause; real renewal risk</td></tr>
+<tr><td><b>H2</b> Price or budget</td><td>Losses unrelated to usage quality</td><td>StyleHub (₹30L) and TandooriTown (₹25L) recorded by Sales, unverified. Tandoori sat at 22% approvals, the lowest, which looks like low perceived value.</td><td class="v-p">Partial</td></tr>
+<tr><td><b>H3</b> Value not delivered: slow manual approval</td><td>Low 24-hour approval wherever accounts are weak; heavy manager time</td><td>All four current accounts under 45% are at risk or watch. Three of four losses at 22–33%. Managers spend 5.5–7 h a week vs 2.5–4 h.</td><td class="v-s">Supported</td></tr>
+<tr><td><b>H4</b> Compliance gap in regulated roles</td><td>Audit findings; regulated segments churning</td><td>CarePoint audit finding on record. PawsCare returned to spreadsheets. Clinics and diagnostics are 22% of ARR.</td><td class="v-s">Supported, narrow</td></tr></table>
+
+<h3>A2 · What each role is trying to get done</h3>
+<table>
+<tr><th style="width:17%">Who</th><th>Job to be done</th><th style="width:20%">What they asked</th><th style="width:15%">Kind of need</th></tr>
+<tr><td>CarePoint compliance head</td><td>When an auditor checks, I want proof that no unqualified person worked, so we avoid a penalty.</td><td>Block expired certificates</td><td><b>Must-be.</b> Absence costs a penalty; presence earns no delight.</td></tr>
+<tr><td>FreshBowl staff and manager</td><td>When I can't work a shift, I want it covered by someone qualified and settled fast, without chasing anyone.</td><td>WhatsApp approvals</td><td><b>Performance.</b> Faster is better, on any channel.</td></tr>
+<tr><td>FreshBowl Ops Director</td><td>When we renew, I want to be sure we are not behind the competition.</td><td>WhatsApp</td><td><b>Parity.</b> Expected because RotaPro has it.</td></tr>
+<tr><td>UrbanMart VP HR</td><td>When hours pass 48, I want to control cost without slowing the floor.</td><td>Approval above 48 h</td><td><b>Performance.</b> Fewer overtime hours is better.</td></tr></table>
+
+<div class="pb"></div>
+<h3 style="margin-top:0">A3 · Prioritisation: score, then sequence by renewal date</h3>
+<table>
+<tr><th style="width:23%">Candidate</th><th style="width:9%">Reach (ARR ₹L)</th><th style="width:9%">Confidence</th><th style="width:9%">Effort (sprints)</th><th style="width:8%">Score</th><th style="width:14%">Renewal pressure</th><th>Basis for confidence</th></tr>
+<tr><td>Certificate gate</td><td>60</td><td>80%</td><td>1</td><td><b>48</b></td><td>Dec 2026</td><td>Audit finding on record; estimate given</td></tr>
+<tr><td>Rules engine core</td><td>160</td><td>60%</td><td>2*</td><td><b>48</b></td><td>Jan–Mar 2027</td><td>Pattern in four accounts, GreenLeaf exit, "approves almost all" quote</td></tr>
+<tr><td>Hours-cap rule on engine</td><td>110</td><td>50%</td><td>1*</td><td><b>55</b></td><td>Aug 2027</td><td>VP quote; the "look at options" threat is unverified</td></tr>
+<tr><td>UrbanMart custom overtime</td><td>110</td><td>50%</td><td>2</td><td><b>28</b></td><td>Aug 2027</td><td>Same demand, but single-customer code</td></tr>
+<tr><td>WhatsApp approvals</td><td>84</td><td>30%</td><td>3</td><td><b>8</b></td><td>Jan 2027</td><td>Contradicted by GreenLeaf; solves channel, not delay</td></tr></table>
+<p class="small">Score = Reach × Confidence ÷ Effort. Reach is ARR addressed, a proxy for value. Confidence and the starred efforts are my judgment (assumptions list). <b>Pure scoring would put the hours rule first. I did not:</b> it needs the engine, and its renewal is ten months away. Sequencing by cost of delay and dependency gives CarePoint (December), then the engine (FreshBowl in January), then the hours rule. The sales plan's biggest item, WhatsApp, scores lowest.</p>
+
+<h3>A4 · If this fails by February 2027, why?</h3>
+<table>
+<tr><th style="width:30%">Cause</th><th style="width:11%">Impact</th><th>Mitigation built into the plan</th></tr>
+<tr><td>FreshBowl did not renew: the Ops Director judged us on a WhatsApp checklist.</td><td>₹84L</td><td>Pilot numbers in his hands by mid-December. S6 is a decision gate for a notification-only WhatsApp version, if he makes it a condition.</td></tr>
+<tr><td>The credential gate blocked valid staff, or left a clinic unstaffed.</td><td>₹60L</td><td>14 days warn-only while data is loaded. Admin-only override with a logged reason.</td></tr>
+<tr><td>The engine ran past three sprints.</td><td>Pilot slips</td><td>Estimate checked with the lead next week. Fallback: ship the hours rule as manager escalation. S6 is buffer.</td></tr>
+<tr><td>Auto-approval approved something it should not have.</td><td>Trust</td><td>Every decision logged with its reason. Unknown training goes to a person. Weekly sample review in the pilot.</td></tr></table>
+
+<h3>A5 · How we will measure it, and what comes after</h3>
+<table>
+<tr><th style="width:15%">Level</th><th style="width:42%">Metric</th><th>Target or trigger</th></tr>
+<tr><td><b>North star</b></td><td>% of swaps decided within 24 hours</td><td>FreshBowl 38% today. Pilot hypothesis ≥85%.</td></tr>
+<tr><td><b>Drivers</b></td><td>Share auto-approved; time in the exception queue</td><td>Hypothesis: about 80% auto-approved.</td></tr>
+<tr><td><b>Guardrails</b></td><td>Valid staff wrongly blocked; overrides; wrong auto-approvals reported</td><td>Zero wrongly blocked after warn-only.</td></tr>
+<tr><td><b>Outcome</b></td><td>Expired-credential shifts worked; overtime share of wage bill; renewals of at-risk ARR</td><td>Zero audit findings. Baselines first, then targets.</td></tr></table>
+<table>
+<tr><th style="width:15%">Horizon</th><th style="width:42%">Scope</th><th>Revisit trigger</th></tr>
+<tr><td><b>Now</b></td><td>Credential gate, rules engine, hours-cap rule, rollout (S1–S5)</td><td>Plan as above.</td></tr>
+<tr><td><b>Next</b></td><td>WhatsApp notifications for exceptions. Roster templates and auto-fill.</td><td>FreshBowl makes WhatsApp a renewal condition, or pilot queue times stay high. Manager scheduling time stays above 5 h a week in shift-heavy accounts.</td></tr>
+<tr><td><b>Later</b></td><td>Credential document upload and verification. Multi-level approval hierarchy.</td><td>Demand from more than one account.</td></tr></table>
 <script>
 const wc=id=>document.getElementById(id).innerText.trim().split(/\s+/).length;
 document.getElementById('wc-reply').textContent=wc('reply');

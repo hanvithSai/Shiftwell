@@ -9,11 +9,11 @@ Case study response for Shiftwell, a fictional shift-scheduling SaaS for multi-l
 | Path | What it is |
 |---|---|
 | `report/Shiftwell_Submission.pdf` | Submission: CEO memo, sales reply, assumptions, build note, links |
-| `docs/index.html` | Working prototype: clickable multi-role demo and handoff spec (GitHub Pages serves `/docs`) |
+| `docs/index.html` | Working prototype: multi-role demo and handoff spec (GitHub Pages serves `/docs`) |
 | `case/Case_Study.pdf` | Original brief and data pack |
 | `report/report.html`, `report/figs/` | Report source and charts |
 | `scripts/` | `check_numbers.py` (recomputes every number in the report), `make_charts.py` (figures), `build_pdf.ps1` (HTML to PDF with Edge) |
 
 ## Prototype
 
-Open `docs/index.html` in a browser, no build step. A clickable demo of the new swap experience for Staff and Location Manager (mobile), Regional Approver (mobile) and Admin (web), plus a **Handoff spec** tab for design and engineering: decision table, screen inventory by sprint, notifications, data model, edge cases. Pick FreshBowl, CarePoint or UrbanMart and follow the guided walkthrough, or send a swap as staff, accept as the colleague and follow it through the manager, approver and admin views. The **Release** switch shows the product as of Sprint 1, Sprints 2–3 and Sprint 4+. All data is synthetic.
+Open `docs/index.html` in a browser, no build step. A demo of the new swap experience for Staff and Location Manager (mobile), Regional Approver (mobile) and Admin (web), plus a **Handoff spec** tab for design and engineering: decision table, screen inventory by sprint, notifications, data model, edge cases. Pick FreshBowl, CarePoint or UrbanMart and follow the guided walkthrough, or send a swap as staff, accept as the colleague and follow it through the manager, approver and admin views. The **Release** switch shows the product as of Sprint 1, Sprints 2–3 and Sprint 4+. All data is synthetic.
