@@ -1,0 +1,139 @@
+﻿<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Shiftwell: Q4 2026 product recommendation</title>
+<style>
+@page{size:A4;margin:13mm 14mm 12mm}
+*{box-sizing:border-box}
+body{font:9.4pt/1.38 "Segoe UI",Calibri,sans-serif;color:#1b2430;margin:0}
+h1{font-size:16pt;margin:0 0 1px}
+h2{font-size:10.5pt;margin:9px 0 3px;color:#1f4fd8;text-transform:uppercase;letter-spacing:.04em}
+h3{font-size:10pt;margin:8px 0 2px}
+p{margin:3px 0}
+.meta{color:#5f6b7a;font-size:8.8pt;border-bottom:1.5px solid #1b2430;padding-bottom:5px;margin-bottom:6px}
+.call{background:#eef3ff;border-left:4px solid #1f4fd8;padding:6px 10px;margin:6px 0}
+tr{page-break-inside:avoid}table{border-collapse:collapse;width:100%;font-size:8.6pt;margin:4px 0}
+th{background:#f1f3f6;text-align:left;padding:3px 6px;border:1px solid #d9dee5}
+td{padding:3px 6px;border:1px solid #d9dee5;vertical-align:top}
+ul{margin:2px 0 2px 16px;padding:0} li{margin:1px 0}
+img{width:100%;display:block}
+.cap{font-size:8pt;color:#5f6b7a;margin:1px 0 4px}
+.pb{page-break-before:always}
+.muted{color:#5f6b7a}
+.box{border:1px solid #d9dee5;border-radius:4px;padding:6px 10px;margin:5px 0}
+.small{font-size:8.6pt}
+</style></head><body>
+
+<!-- ============ DELIVERABLE 1: MEMO (2 pages) ============ -->
+<h1>Shiftwell: what we build this quarter</h1>
+<div class="meta"><b>To:</b> CEO &nbsp;·&nbsp; <b>From:</b> Product &nbsp;·&nbsp; <b>Date:</b> 17 Oct 2026 &nbsp;·&nbsp; <b>Decision needed:</b> approve the plan below; Engineering validates one estimate next week</div>
+
+<div class="call"><b>The call.</b> Build one swap-rules engine instead of three features. It checks credentials, training and weekly hours whenever someone is put on a shift, approves what passes, escalates what doesn't and blocks what is unsafe. Ship the credential gate first (1 sprint), then the engine, then the hours-cap rule. Do not build WhatsApp approvals or a custom UrbanMart branch this quarter.</div>
+
+<h2>1. Diagnosis: what they asked for vs what they need</h2>
+<table>
+<tr><th style="width:15%">Account</th><th style="width:21%">Asked for</th><th style="width:24%">Actually needs</th><th>Evidence</th></tr>
+<tr><td><b>FreshBowl</b><br>₹84L · Jan 27 · at risk</td><td>Swaps requested and approved on WhatsApp</td><td>Decisions in minutes, not a day, without dropping the checks</td><td>Only 38% approved in 24 hrs. Staff find a partner on WhatsApp in 10 min, then wait a day; "half the time we just swap and don't tell the app". The manager approves almost everything and checks two things: training and overtime.</td></tr>
+<tr><td><b>CarePoint</b><br>₹60L · Dec 26 · at risk</td><td>Block expired certificates</td><td>The same: an automatic control instead of a manager's Excel</td><td>An auditor found two shifts covered by nurses with lapsed BLS. One more finding means a penalty. The ask and the need match.</td></tr>
+<tr><td><b>UrbanMart</b><br>₹110L · Aug 27 · healthy</td><td>Regional approval for any shift past 48 hrs</td><td>Overtime control, without piling approvals on managers</td><td>Overtime is 9% of the wage bill. A blanket approval step adds work to a flow where 36% of swaps already wait over a day. Escalate only the exceptions.</td></tr>
+</table>
+
+<p><b>Approval speed is the pattern.</b> All four current accounts under 45% of swaps approved in 24 hrs are at risk or on watch; all four accounts lost this year were at 60% or below (Fig. 1). ₹220L, 54% of ARR, is at risk or on watch and renews by March 2027. UrbanMart is the largest account (27% of ARR) but renews in ten months and is healthy.</p>
+<img src="figs/fig1_approval_vs_health.png" style="width:86%;margin:0 auto">
+<div class="cap">Fig. 1. Approval speed vs account status. Bubble size = ARR. Source: data pack, Sept 2026. Directional, not causal: 12 accounts, and restaurants are structurally swap-heavy.</div>
+
+<p><b>Sales' read of the churn is thin.</b> Only GreenLeaf (₹16L of ₹80L lost) went to a WhatsApp competitor, and its former head of operations says it was not WhatsApp: managers couldn't keep up with approvals, and RotaPro let trained staff swap automatically.</p>
+<p><b>The three requests are one mechanism.</b> A certificate expiry, a 48-hour cap and "trained and no overtime" are all checks before someone is assigned a shift. Managers run those checks by hand today. WhatsApp is only a different screen for the same approval.</p>
+<p><b>Two data flags.</b> The FreshBowl manager's "25–30 requests a night" is about 30 times the chain average (2,900 swaps ÷ 120 locations ≈ 24 per location per month), so I treat it as an outlier store; the issue is latency, not volume. And off-app swaps mean recorded swap counts understate real demand.</p>
+
+<h2 class="pb2">2. Decision: what we build, in order</h2>
+<table>
+<tr><th style="width:9%">Sprint</th><th style="width:30%">Ships</th><th style="width:16%">For</th><th>Exit check</th></tr>
+<tr><td><b>1</b></td><td><b>Credential gate.</b> Required credentials per role with expiry, checked against the shift date. Hard block at scheduling and swap. 30-day expiry alert. Admin-only override, logged.</td><td>CarePoint, any regulated role</td><td>Live early Nov, ahead of the December renewal. 14-day warn-only period to backfill data, then enforced. Missing data blocks after that; it never passes silently.</td></tr>
+<tr><td><b>2–3</b></td><td><b>Rules engine.</b> Training and credential checks, auto-approve for eligible swaps, exceptions to the manager queue, decision log.</td><td>FreshBowl pilot, 5–10 stores</td><td>≥85% decided in 24 hrs at pilot stores (baseline 38%). Hypothesis: about 80% auto-approved.</td></tr>
+<tr><td><b>4</b></td><td><b>Hours-cap rule.</b> Projected weekly hours vs a configurable cap; above it, route to a designated approver.</td><td>UrbanMart (and any account)</td><td>Rule live by early Dec as configuration, not a custom branch.</td></tr>
+<tr><td><b>5</b></td><td>Rollout and hardening: permissions, edge cases, training for managers.</td><td>All accounts</td><td>Block and override events reviewed; no valid staff wrongly blocked.</td></tr>
+<tr><td><b>6</b></td><td>Buffer. Decide on WhatsApp using pilot data.</td><td></td><td>Re-plan if the engine ran long.</td></tr>
+</table>
+<img src="figs/fig2_renewals_vs_plan.png" style="width:86%;margin:0 auto">
+<div class="cap">Fig. 2. Delivery plan against renewal dates. The credential gate lands before CarePoint renews and the engine pilot runs before FreshBowl renews.</div>
+<p class="small"><b>The engine estimate is mine, not Engineering's:</b> about 2 sprints (range 1.5 to 3), with the hours rule adding about 1. At 3 sprints the plan still fits with no buffer; beyond that, the hours rule ships as manager escalation only and WhatsApp is not discussed until Q1. The sales plan (3 + 2 + 1) also fills all six sprints, with no buffer, and shares no code (Fig. 3, last page).</p>
+
+<h3>What we will not build, and why</h3>
+<ul class="small">
+<li><b>WhatsApp approvals (3 sprints).</b> Half our capacity to move the same approval to another screen. Message cost is small (about ₹0.5L a year for FreshBowl); the sprints are the cost. Revisit at sprint 6; if FreshBowl makes WhatsApp a renewal condition, a notification-only version on top of the engine is the next step.</li>
+<li><b>A custom UrbanMart build (2 sprints).</b> Single-customer code, and about twice the cost of the same rule on the engine.</li>
+<li><b>A full credential suite</b> (document upload, verification) and a regional hierarchy. We add one "approver" designation and nothing more.</li>
+</ul>
+
+<h3>What we tell each account</h3>
+<table>
+<tr><th style="width:15%">Account</th><th>Message</th></tr>
+<tr><td><b>CarePoint</b></td><td>The credential block ships first, early November, covering scheduling and swaps for BLS and council registration. We need your credential list per role and one Admin owner. This week, Customer Success runs an expiry check against your sheet.</td></tr>
+<tr><td><b>FreshBowl</b></td><td>Swaps that pass training and overtime checks are approved instantly; the rest still reach the manager. Pilot starts late November in stores you choose. WhatsApp is on the table after the pilot, with real numbers.</td></tr>
+<tr><td><b>UrbanMart</b></td><td>The 48-hour rule arrives as a setting, targeted early December (confirmed once Engineering signs off). Please co-design it: the week boundary and who the approvers are. Meanwhile, a weekly list of staff projected above 48 hrs.</td></tr>
+<tr><td><b>FitZone, Brew &amp; Co</b></td><td>Both renew before anything ships (Oct, Nov). A Customer Success call this week, with a place in the pilot. A commercial offer is your call.</td></tr>
+</table>
+
+<h3>How we will know it works</h3>
+<p class="small">Weekly per account: % swaps decided in 24 hrs, share auto-approved, off-app swaps, blocks and overrides, overtime share of wage bill. Risks: bad credential data blocking valid staff (warn-only period first); a wrong auto-approval (every decision logged and explained; unknown training goes to the manager); the engine estimate (checked next week).</p>
+
+<!-- ============ PAGE 3 ============ -->
+<div class="pb"></div>
+<h1>Reply to the sales head</h1>
+<div class="meta">Deliverable 2 · <span id="wc-reply"></span> words</div>
+<div id="reply">
+<p>Thanks for the memo. You're right on the stakes: UrbanMart is 27% of ARR and RotaPro is a real competitor.</p>
+<p>Where I'd change the plan is the diagnosis. GreenLeaf's head of operations told us it wasn't WhatsApp: managers couldn't keep up with approvals, and RotaPro auto-approved trained staff. Every account we lost sat at 60% or below on 24-hour approvals, and our four weakest accounts today are all under 45%. WhatsApp costs three of our six sprints and doesn't touch that.</p>
+<p>So we build one rules engine. UrbanMart gets its 48-hour rule as a setting, not a custom build, targeted for early December, about half the effort of the custom version. That is a delivery inside this quarter, not a no.</p>
+<p>Certificates aren't only a clinic issue. CarePoint's ₹60L renews in December after an audit finding, and the gate is one sprint. Diagnostics and gyms likely need it too.</p>
+<p>Two asks. Find out from UrbanMart's VP what "look at options" means, since it isn't in our interview notes, and who their regional approvers are. And join me on the FreshBowl call: auto-approval first, WhatsApp reviewed after the pilot.</p>
+</div>
+
+<h1 style="margin-top:14px">Assumptions</h1>
+<div class="meta">Deliverable 3 · every assumption made where the data pack was silent</div>
+<ul class="small">
+<li><b>Capacity.</b> Six sprints is the team's total, including testing. Sprints are two weeks, starting 19 Oct, so "this quarter" runs to about 8 Jan.</li>
+<li><b>Engine estimate.</b> About 2 sprints (range 1.5 to 3); the hours-cap rule about 1 sprint on top. Both are my numbers, to be validated by the engineering lead next week.</li>
+<li><b>Credential estimate.</b> The given 1 sprint covers swap-time enforcement, the 30-day alert and the Admin override. If not, that work moves into the engine sprints, where swap checks live anyway.</li>
+<li><b>Renewal dates.</b> The pack gives months only; I plot them mid-month.</li>
+<li><b>Hours.</b> The week runs Monday to Sunday and counts scheduled hours; leave is excluded. UrbanMart to confirm.</li>
+<li><b>Regional approver.</b> No such role exists (Admins don't approve swaps). I assume one "approver" designation, set by Admin, reachable on mobile or web, inside sprint 4.</li>
+<li><b>Overtime scope.</b> v1 covers swaps and extra shifts. Roster building gets a warning to the manager; approval at roster publish is a stretch item.</li>
+<li><b>Auto-approval share.</b> About 80% of FreshBowl swaps are eligible (the manager "approves almost all"). The 85% target is a hypothesis; exceptions are assumed to keep today's 38% pace.</li>
+<li><b>Outlier volume.</b> "25–30 requests a night" is one store. Chain average is about 24 per location per month.</li>
+<li><b>WhatsApp cost.</b> Four messages per swap at ₹0.35 is about ₹1.40 per swap, or about ₹4,000 a month (₹0.5L a year) for FreshBowl.</li>
+<li><b>Data quality.</b> Health labels and approval rates are as given. Twelve accounts show a pattern, not proof.</li>
+<li><b>Certificates beyond clinics.</b> I assume diagnostics, gyms and some restaurant roles have mandatory certificates. The pack doesn't say; "not niche" is an inference. Clinics plus diagnostics are ₹90L (22% of ARR).</li>
+<li><b>Credential data.</b> After the 14-day warn-only period, a missing required credential blocks. Unknown training routes to the manager.</li>
+<li><b>Interim UrbanMart report.</b> Per-person weekly hours can be exported from existing data.</li>
+<li><b>UrbanMart's threat.</b> "Look at options" comes from the sales memo only. No customer was contacted.</li>
+<li><b>Churn base.</b> Opening ARR is ₹408L plus ₹80L lost, so about 16% gross churn.</li>
+</ul>
+
+<!-- ============ PAGE 4 ============ -->
+<div class="pb"></div>
+<h1>Build note</h1>
+<div class="meta">Deliverable 4 · <span id="wc-build"></span> words</div>
+<div id="build">
+<p>The prototype is a single HTML file with no backend. Pick FreshBowl, CarePoint or UrbanMart and it loads a synthetic night of 30 swap requests. Switch the credential gate, training check, hours cap, approver escalation and auto-approve on or off; every request gets a decision and a step-by-step trace. Credentials are checked against the shift date, not today. "Today's rules" reproduces the current product, where all 30 wait for the manager. Admin override of a block writes to an audit log.</p>
+<p>The engine is one function, so it can move into tests. AI: several tools, including ChatGPT and Claude, were used to cross-check the analysis, logic and code, alongside my own thinking and drafting. Chat links can't be shared; I'm happy to walk through the process.</p>
+<p>A real version needs from engineering: a per-role credential model with expiry; rule configuration per account; weekly-hours logic (week boundary, leave, both sides of a swap); approver designation and routing; a decision and audit log; notifications; warn-only mode and data backfill; feature flags and tests.</p>
+</div>
+
+<h1 style="margin-top:14px">Links</h1>
+<div class="meta">Deliverables 5 and 6</div>
+<table class="small">
+<tr><td style="width:24%"><b>Working prototype</b></td><td>https://hanvithsai.github.io/Shiftwell/</td></tr>
+<tr><td><b>Source and case files</b></td><td>https://github.com/hanvithSai/Shiftwell</td></tr>
+<tr><td><b>AI chat link</b></td><td>Not shareable. Multiple AI tools were used for cross-validation; available to walk through in the interview.</td></tr>
+</table>
+
+<h2>Supporting view: sprint allocation</h2>
+<img src="figs/fig3_sprint_allocation.png" style="width:85%">
+<div class="cap">Fig. 3. The sales plan uses all six sprints on three unconnected builds. The recommended plan keeps one sprint of buffer and builds a shared engine.</div>
+
+<script>
+const wc=id=>document.getElementById(id).innerText.trim().split(/\s+/).length;
+document.getElementById('wc-reply').textContent=wc('reply');
+document.getElementById('wc-build').textContent=wc('build');
+</script>
+</body></html>
