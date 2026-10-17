@@ -1,0 +1,254 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Shiftwell | Swap Rules prototype</title>
+<style>
+:root{
+  --ink:#1b2430; --muted:#5f6b7a; --line:#dfe4ea; --bg:#f6f7f9; --card:#fff; --accent:#1f4fd8;
+  --auto:#157a55; --auto-bg:#e8f6ef; --mgr:#4b5563; --mgr-bg:#eef0f3;
+  --appr:#a15c07; --appr-bg:#fdf3df; --block:#b42318; --block-bg:#fdecea;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.5 "Segoe UI",system-ui,-apple-system,sans-serif}
+header{background:#fff;border-bottom:1px solid var(--line);padding:18px 24px}
+.wrap{max-width:1180px;margin:0 auto}
+h1{font-size:20px;margin:0 0 2px}
+header p{margin:0;color:var(--muted);max-width:820px}
+.tabs{display:flex;gap:8px;margin:18px 0 14px;flex-wrap:wrap;align-items:center}
+.tabs span.lbl{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.06em;margin-right:4px}
+.tab{border:1px solid var(--line);background:#fff;border-radius:8px;padding:8px 12px;cursor:pointer;font:inherit;color:var(--ink)}
+.tab small{display:block;color:var(--muted);font-size:11.5px}
+.tab.on{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
+main{display:grid;grid-template-columns:300px 1fr;gap:16px;padding:0 24px 40px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px}
+h2{font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:0 0 12px}
+.rule{padding:10px 0;border-top:1px solid var(--line)}
+.rule:first-of-type{border-top:0;padding-top:0}
+.rule label.t{display:flex;gap:8px;align-items:flex-start;font-weight:600;cursor:pointer}
+.rule .d{color:var(--muted);font-size:12.5px;margin:3px 0 0 24px}
+.rule input[type=number]{width:64px;padding:4px 6px;border:1px solid #c9d0d9;border-radius:6px;font:inherit}
+.reqs{margin:6px 0 0 24px;font-size:12.5px;color:var(--muted)}
+.btn{border:1px solid var(--line);background:#fff;border-radius:8px;padding:7px 11px;font:inherit;cursor:pointer}
+.btn:hover{border-color:#b9c2cd}
+.btn.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:12px}
+.stat{border-radius:10px;padding:12px;border:1px solid var(--line);background:#fff}
+.stat b{display:block;font-size:26px;line-height:1.1}
+.stat span{font-size:12px;color:var(--muted)}
+.stat.auto{background:var(--auto-bg);border-color:#bfe3d2}.stat.auto b{color:var(--auto)}
+.stat.mgr{background:var(--mgr-bg)}.stat.mgr b{color:var(--mgr)}
+.stat.appr{background:var(--appr-bg);border-color:#f0d9a5}.stat.appr b{color:var(--appr)}
+.stat.block{background:var(--block-bg);border-color:#f3c3be}.stat.block b{color:var(--block)}
+.load{display:flex;align-items:center;gap:14px;margin-bottom:12px}
+.bar{flex:1;height:10px;background:var(--mgr-bg);border-radius:6px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--accent)}
+.load .n{white-space:nowrap}
+.filters{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap}
+.chip{border:1px solid var(--line);background:#fff;border-radius:99px;padding:3px 10px;font-size:12.5px;cursor:pointer}
+.chip.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;font-weight:600;color:var(--muted);font-size:12px;padding:6px 8px;border-bottom:1px solid var(--line)}
+td{padding:7px 8px;border-bottom:1px solid #eef1f4;vertical-align:top}
+tr.row{cursor:pointer}tr.row:hover{background:#fafbfc}tr.sel{background:#f2f6ff!important}
+.badge{display:inline-block;padding:2px 8px;border-radius:99px;font-size:12px;font-weight:600;white-space:nowrap}
+.b-auto{background:var(--auto-bg);color:var(--auto)}.b-mgr{background:var(--mgr-bg);color:var(--mgr)}
+.b-appr{background:var(--appr-bg);color:var(--appr)}.b-block{background:var(--block-bg);color:var(--block)}
+.muted{color:var(--muted)}
+.trace{margin-top:12px;display:none}
+.trace.on{display:block}
+.trace h3{margin:0 0 8px;font-size:14px}
+.chk{display:flex;gap:8px;padding:4px 0}
+.dot{width:16px;height:16px;border-radius:50%;flex:none;margin-top:3px;font-size:10px;color:#fff;text-align:center;line-height:16px}
+.d-ok{background:var(--auto)}.d-warn{background:var(--appr)}.d-fail{background:var(--block)}.d-off{background:#aab3bf}
+.audit{margin-top:12px;font-size:12.5px}
+.audit li{margin:2px 0}
+footer{color:var(--muted);font-size:12px;padding:0 24px 28px}
+@media(max-width:900px){main{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <h1>Shiftwell Swap Rules <span class="muted" style="font-weight:400">· prototype</span></h1>
+  <p>One rules engine decides every shift assignment. Eligible swaps go through instantly, exceptions go to the right person, and unsafe ones are blocked. Pick a customer, change the rules and watch tonight's queue change.</p>
+</div></header>
+
+<div class="wrap">
+  <div class="tabs" id="tabs"><span class="lbl">Customer</span></div>
+</div>
+
+<div class="wrap">
+<main>
+  <section class="card" id="rules">
+    <h2>Rules</h2>
+
+    <div class="rule"><label class="t"><input type="checkbox" id="credGate"> Credential gate</label>
+      <div class="d">Block if a required certificate is missing, or expired on the shift date.</div>
+      <div class="reqs" id="reqs"></div></div>
+
+    <div class="rule"><label class="t"><input type="checkbox" id="trainGate"> Training check</label>
+      <div class="d">If role or station training is not verified, send to the manager.</div></div>
+
+    <div class="rule"><label class="t"><input type="checkbox" id="hoursGate"> Weekly hours cap</label>
+      <div class="d">Projected hours above <input type="number" id="cap" min="20" max="80"> h go to an approver.</div>
+      <div class="d"><label><input type="checkbox" id="approver"> Escalate to regional approver (otherwise to manager)</label></div></div>
+
+    <div class="rule"><label class="t"><input type="checkbox" id="auto"> Auto-approve eligible swaps</label>
+      <div class="d">Everything that passes all checks is approved instantly and logged.</div></div>
+
+    <div style="display:flex;gap:8px;margin-top:6px">
+      <button class="btn" id="reseed">New night's queue</button>
+      <button class="btn" id="today">Today's rules</button>
+    </div>
+    <p class="muted" style="font-size:12px;margin:12px 0 0">"Today's rules" switches everything off: every swap waits for the manager, as in the current product.</p>
+  </section>
+
+  <section>
+    <div class="stats" id="stats"></div>
+    <div class="card" style="margin-bottom:12px">
+      <div class="load"><div><b id="loadTitle"></b><div class="muted" style="font-size:12px" id="loadSub"></div></div>
+        <div class="bar"><i id="loadBar"></i></div><div class="n" id="loadN"></div></div>
+    </div>
+    <div class="card">
+      <div class="filters" id="filters"></div>
+      <table><thead><tr><th>Request</th><th>Role</th><th>Shift</th><th>Projected hrs</th><th>Decision</th><th>Reason</th></tr></thead><tbody id="rows"></tbody></table>
+      <div class="trace card" id="trace"></div>
+      <div class="audit" id="audit"></div>
+    </div>
+  </section>
+</main>
+</div>
+<footer class="wrap">Synthetic data generated in the browser. Nothing here connects to Shiftwell or customer systems. In this model the person taking the shift is checked; a production version checks both sides of a swap.</footer>
+
+<script>
+// ---------- scenarios ----------
+const SCEN = {
+  freshbowl:{label:'FreshBowl',sub:'Restaurants · approvals are the problem',
+    roles:{Cook:.45,Server:.4,Dishwasher:.15}, requirements:{},
+    hours:[22,46], shift:[5,9], trained:.9, credIssue:0, date:'2026-11-20',
+    cfg:{credGate:true,trainGate:true,hoursGate:true,cap:48,approver:false,auto:true}},
+  carepoint:{label:'CarePoint Clinics',sub:'Clinics · lapsed certificates',
+    roles:{Nurse:.6,'Clinic assistant':.25,Receptionist:.15},
+    requirements:{Nurse:['BLS','Nursing council registration']},
+    hours:[24,44], shift:[6,10], trained:.95, credIssue:.1, date:'2026-11-20',
+    cfg:{credGate:true,trainGate:true,hoursGate:true,cap:48,approver:false,auto:true}},
+  urbanmart:{label:'UrbanMart',sub:'Retail · overtime is 9% of wage bill',
+    roles:{'Store associate':.7,Cashier:.2,'Stock handler':.1}, requirements:{},
+    hours:[28,44], shift:[6,9], trained:.93, credIssue:0, date:'2026-11-20',
+    cfg:{credGate:true,trainGate:true,hoursGate:true,cap:48,approver:true,auto:true}}
+};
+const TODAY_CFG={credGate:false,trainGate:false,hoursGate:false,cap:48,approver:false,auto:false};
+const FIRST=['Ananya','Ravi','Meera','Karthik','Sana','Imran','Divya','Arjun','Pooja','Naveen','Lakshmi','Farhan','Isha','Rohit','Kavya','Suresh','Neha','Vikram','Tara','Manoj','Anita','Dev','Priya','Sameer','Hema','Aditya','Rekha','Zoya','Gautam','Nisha','Ajay','Bhavna','Irfan','Jaya','Kiran','Lalit','Mona','Nitin','Omkar','Padma'];
+const LAST=['Rao','Nair','Shah','Khan','Reddy','Iyer','Das','Mehta','Pillai','Singh','Verma','Menon','Joshi','Bose','Kulkarni'];
+
+let state={sc:'freshbowl',seed:1,cfg:{...SCEN.freshbowl.cfg},reqs:[],filter:'all',sel:null,audit:[]};
+
+// ---------- data ----------
+function rng(s){return function(){s|=0;s=s+0x6D2B79F5|0;let t=Math.imul(s^s>>>15,1|s);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+function pick(r,weights){let x=r(),a=0;for(const k in weights){a+=weights[k];if(x<=a)return k}return Object.keys(weights)[0]}
+function addDays(d,n){const x=new Date(d+'T00:00:00');x.setDate(x.getDate()+n);return x.toISOString().slice(0,10)}
+function gen(){
+  const S=SCEN[state.sc], r=rng(state.seed*977+state.sc.length*13), out=[];
+  for(let i=0;i<30;i++){
+    const role=pick(r,S.roles), reqList=S.requirements[role]||[];
+    const date=addDays(S.date,Math.floor(r()*6));
+    const creds={};
+    reqList.forEach(n=>{
+      const x=r();
+      if(x<S.credIssue*.55) creds[n]=addDays(date,-Math.ceil(r()*120));      // expired
+      else if(x<S.credIssue*.75) creds[n]=null;                              // missing
+      else if(x<S.credIssue*.75+.12) creds[n]=addDays(date,Math.ceil(r()*28)); // expiring within 30 days
+      else creds[n]=addDays(date,60+Math.floor(r()*500));
+    });
+    const h=Math.round(S.hours[0]+r()*(S.hours[1]-S.hours[0])), len=Math.round(S.shift[0]+r()*(S.shift[1]-S.shift[0]));
+    out.push({id:i+1,from:FIRST[Math.floor(r()*FIRST.length)]+' '+LAST[Math.floor(r()*LAST.length)],
+      to:FIRST[Math.floor(r()*FIRST.length)]+' '+LAST[Math.floor(r()*LAST.length)],
+      role,date,hours:h,len,trained:r()<S.trained,creds,reqList});
+  }
+  return out;
+}
+
+// ---------- engine ----------
+function daysBetween(a,b){return Math.round((new Date(b+'T00:00:00')-new Date(a+'T00:00:00'))/86400000)}
+function evaluate(q,cfg){
+  const checks=[];let credFail=false;
+  if(q.reqList.length===0) checks.push({s:cfg.credGate?'ok':'off',t:'Credentials',d:'No certificate required for this role'});
+  q.reqList.forEach(n=>{
+    const c=q.creds[n];
+    if(!cfg.credGate){checks.push({s:'off',t:n,d:'Credential gate is off'});return}
+    if(!c){credFail=true;checks.push({s:'fail',t:n,d:'No record on file. Required for this role'});return}
+    const left=daysBetween(q.date,c);
+    if(left<0){credFail=true;checks.push({s:'fail',t:n,d:'Expired '+(-left)+' days before the shift ('+c+')'});}
+    else if(left<=30) checks.push({s:'warn',t:n,d:'Valid on shift date, expires in '+left+' days. Renewal reminder sent'});
+    else checks.push({s:'ok',t:n,d:'Valid until '+c});
+  });
+  const trainOK=q.trained;
+  checks.push({s:cfg.trainGate?(trainOK?'ok':'warn'):'off',t:'Role / station training',d:cfg.trainGate?(trainOK?'Verified':'Not verified. Needs a manager decision'):'Training check is off'});
+  const proj=q.hours+q.len, over=cfg.hoursGate&&proj>cfg.cap;
+  checks.push({s:cfg.hoursGate?(over?'warn':'ok'):'off',t:'Weekly hours',d:cfg.hoursGate?(proj+' h projected vs cap of '+cfg.cap+(over?'. Needs approval':'')):'Hours cap is off'});
+  let out,reason;
+  if(credFail){out='block';reason=checks.filter(c=>c.s==='fail').map(c=>c.t).join(', ')+': certificate not valid'}
+  else if(over){out=cfg.approver?'appr':'mgr';reason=proj+' h exceeds '+cfg.cap+' h'+(cfg.approver?'. Sent to regional approver':'. Sent to manager')}
+  else if(cfg.trainGate&&!trainOK){out='mgr';reason='Training not verified'}
+  else if(cfg.auto){out='auto';reason='All checks passed'+(checks.some(c=>c.s==='warn')?' (renewal reminder sent)':'')}
+  else{out='mgr';reason='No auto-approval. Manager queue'}
+  return{out,reason,checks,proj};
+}
+
+// ---------- render ----------
+const LBL={auto:'Auto-approved',mgr:'Manager',appr:'Approver',block:'Blocked'};
+const $=id=>document.getElementById(id);
+function render(){
+  const cfg=state.cfg, res=state.reqs.map(q=>({q,e:evaluate(q,cfg)}));
+  const n=k=>res.filter(x=>x.e.out===k).length, N=res.length;
+  $('stats').innerHTML=['auto','mgr','appr','block'].map(k=>`<div class="stat ${k}"><b>${n(k)}</b><span>${LBL[k]}${k==='auto'?' instantly':k==='mgr'?' queue':k==='appr'?' (escalated)':' with reason'}</span></div>`).join('');
+  const mq=n('mgr'), cut=Math.round((1-mq/N)*100);
+  $('loadTitle').textContent='Location manager queue';
+  $('loadSub').textContent='Requests needing a manager tonight, vs all '+N+' today';
+  $('loadBar').style.width=(mq/N*100)+'%';
+  $('loadN').innerHTML=`<b>${mq}</b> of ${N} &nbsp;<span class="muted">(${cut>0?'−'+cut+'%':'no change'})</span>`;
+  $('filters').innerHTML=['all','auto','mgr','appr','block'].map(k=>`<span class="chip ${state.filter===k?'on':''}" data-f="${k}">${k==='all'?'All ('+N+')':LBL[k]+' ('+n(k)+')'}</span>`).join('');
+  $('rows').innerHTML=res.filter(x=>state.filter==='all'||x.e.out===state.filter).map(({q,e})=>
+    `<tr class="row ${state.sel===q.id?'sel':''}" data-id="${q.id}"><td>#${q.id} ${q.from} → <b>${q.to}</b></td><td>${q.role}</td><td>${q.date}, ${q.len} h</td><td>${e.proj} h</td><td><span class="badge b-${e.out}">${LBL[e.out]}</span></td><td class="muted">${e.reason}</td></tr>`).join('');
+  const sel=res.find(x=>x.q.id===state.sel), t=$('trace');
+  if(sel){
+    const {q,e}=sel;
+    t.className='trace card on';
+    t.innerHTML=`<h3>Decision trace · request #${q.id}: ${q.to} takes ${q.from}'s ${q.len} h ${q.role.toLowerCase()} shift on ${q.date}</h3>`+
+      e.checks.map(c=>`<div class="chk"><span class="dot d-${c.s}">${c.s==='ok'?'✓':c.s==='fail'?'×':c.s==='warn'?'!':'–'}</span><div><b>${c.t}</b> <span class="muted">${c.d}</span></div></div>`).join('')+
+      `<div style="margin-top:8px"><span class="badge b-${e.out}">${LBL[e.out]}</span> ${e.reason}`+
+      (e.out==='block'?` &nbsp;<button class="btn" id="ovr">Admin override (logged)</button>`:'')+`</div>`;
+    const o=$('ovr'); if(o) o.onclick=()=>{state.audit.unshift(`Request #${q.id}: Admin override of blocked credential, reason required in production. ${new Date().toLocaleTimeString()}`);renderAudit()};
+  } else t.className='trace card';
+  renderAudit();
+}
+function renderAudit(){ $('audit').innerHTML=state.audit.length?'<b>Audit log</b><ul>'+state.audit.map(a=>`<li>${a}</li>`).join('')+'</ul>':''; }
+
+function syncControls(){
+  const c=state.cfg;
+  $('credGate').checked=c.credGate;$('trainGate').checked=c.trainGate;$('hoursGate').checked=c.hoursGate;
+  $('cap').value=c.cap;$('approver').checked=c.approver;$('auto').checked=c.auto;
+  const rq=SCEN[state.sc].requirements, ks=Object.keys(rq);
+  $('reqs').innerHTML=ks.length?ks.map(k=>`<b>${k}:</b> ${rq[k].join(' + ')}`).join('<br>'):'No certificates required in this account (rule set up, nothing to enforce).';
+}
+function load(sc){
+  state.sc=sc;state.cfg={...SCEN[sc].cfg};state.reqs=gen();state.filter='all';state.sel=null;state.audit=[];
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('on',t.dataset.sc===sc));
+  syncControls();render();
+}
+// ---------- wiring ----------
+Object.entries(SCEN).forEach(([k,s])=>{
+  const b=document.createElement('button');b.className='tab';b.dataset.sc=k;b.innerHTML=`<b>${s.label}</b><small>${s.sub}</small>`;
+  b.onclick=()=>load(k);$('tabs').appendChild(b);
+});
+['credGate','trainGate','hoursGate','approver','auto'].forEach(id=>$(id).onchange=e=>{state.cfg[id]=e.target.checked;render()});
+$('cap').onchange=e=>{state.cfg.cap=Math.max(20,Math.min(80,+e.target.value||48));render()};
+$('reseed').onclick=()=>{state.seed++;state.reqs=gen();state.sel=null;render()};
+$('today').onclick=()=>{state.cfg={...TODAY_CFG};syncControls();render()};
+$('filters').onclick=e=>{const f=e.target.dataset.f;if(f){state.filter=f;render()}};
+$('rows').onclick=e=>{const r=e.target.closest('tr');if(r){state.sel=+r.dataset.id;render()}};
+load('freshbowl');
+</script>
+</body>
+</html>
