@@ -38,13 +38,14 @@ img{display:block;margin:0 auto}
 <div class="band"><div class="kicker">SHIFTWELL · PRODUCT CASE SUBMISSION</div><div class="title">Q4 2026 Product Recommendation</div><div class="subt">Memo to CEO · Reply to Sales · Assumptions · Build note · Prototype link · Supporting analysis</div></div>
 <div class="lbl">Deliverable 1 · Recommendation memo</div>
 <h1>Build one swap-rules engine this quarter; defer WhatsApp and the custom overtime build</h1>
-<div class="meta"><b>To:</b> CEO &nbsp;·&nbsp; <b>From:</b> Product &nbsp;·&nbsp; <b>17 Oct 2026</b> &nbsp;·&nbsp; <b>Decision needed:</b> approve the sequence below. Engineering validates one estimate next week.</div>
+<div class="meta"><b>To:</b> CEO &nbsp;·&nbsp; <b>From:</b> Product &nbsp;·&nbsp; <b>17 Oct 2026</b> &nbsp;·&nbsp; <b>Decision needed:</b> approve the sequence below. Engineering validates the rules-engine estimate next week.</div>
 
 <div class="call"><b>Recommendation</b>
 <ul>
-<li><b>Build:</b> credential gate (S1), rules engine with auto-approval (S2–3), hours-cap rule with approver (S4), rollout (S5), buffer (S6).</li>
+<li><b>Build one swap-rules engine.</b> Every shift assignment (roster entry or swap) is checked for valid credentials, training and weekly hours: passes are approved instantly, exceptions go to the right person, unsafe ones are blocked. Two-week sprints from 19 Oct: S1 credential gate, S2–3 engine with auto-approval, S4 hours-cap rule, S5 rollout, S6 buffer.</li>
 <li><b>Do not build:</b> WhatsApp approvals, a custom UrbanMart branch, a full credential suite.</li>
-<li><b>Why:</b> the three requests are the same check on a shift assignment. Slow manual approval is what separates our weak accounts from our healthy ones. The two accounts we can still save by renewal (CarePoint, FreshBowl) and our largest (UrbanMart) are ₹254L, 62% of ARR.</li></ul></div>
+<li><b>Why:</b> the three requests are the same check on a shift assignment. Slow manual approval is what separates our weak accounts from our healthy ones. The three accounts that asked (CarePoint, FreshBowl, UrbanMart) hold ₹254L, 62% of ARR.</li></ul></div>
+<div class="cap">Terms: ₹L = lakh (₹100,000) of annual recurring revenue (ARR). S1–S6 = sprints 1 to 6. CS = Customer Success. h = hours.</div>
 
 <h2><span>1</span> The three requests share one cause: manual, slow, unchecked approval</h2>
 <table>
@@ -55,44 +56,45 @@ img{display:block;margin:0 auto}
 </table>
 
 <p><b>The churn sits in shift-heavy accounts, and approval speed is the symptom.</b> The four restaurant, cafe and gym accounts hold ₹160L (39% of ARR). All are at risk or on watch, with 29–41% approved in 24 h and managers spending 5.5–7 h a week on scheduling against 2.5–4 h elsewhere. Two of the four accounts we lost (₹41L, half of ₹80L) were restaurants. In total ₹220L, 54% of ARR, is at risk or on watch and renews by March 2027 (Fig. 1).</p>
-<img src="figs/fig1_approval_vs_health.png" style="width:82%">
+<img src="figs/fig1_approval_vs_health.png" style="width:66%">
 <div class="cap">Fig. 1. Approval speed vs account status; bubble = ARR. Directional, not causal: 12 accounts, and restaurants are structurally swap-heavy.</div>
 
 <p><b>It is not WhatsApp.</b> Only GreenLeaf (₹16L of ₹80L lost) left for a WhatsApp competitor, and its former head of operations says managers couldn't keep up and RotaPro auto-approved trained staff. Three of four lost accounts were at 22–33% on 24-hour approvals.</p>
-<p><b>Approval is a rubber stamp that costs a day, not a manager-hours problem.</b> A typical FreshBowl location sees about 24 swaps a month: 2–4 hours of approvals against about 28 hours of scheduling. The "25–30 a night" quote is 34 times the chain average, so I treat it as an outlier. Auto-approval buys speed and safety; building the roster is the bigger manager burden, a candidate for next quarter.</p>
+<p><b>Approval is a rubber stamp that costs a day, not a manager-hours problem.</b> A typical FreshBowl location sees about 24 swaps a month: 2–4 hours of approvals against about 28 hours of scheduling. The manager's "25–30 a night" (about 800 a month) is 34 times that, so I treat it as an outlier. Auto-approval buys speed and safety; building the roster is the bigger manager burden, a candidate for next quarter.</p>
 
 <div style="page-break-inside:avoid"><h2><span>2</span> Options considered: only the engine meets all three asks and keeps a buffer</h2>
 <table>
 <tr><th style="width:40%">Option</th><th style="width:9%">Sprints</th><th style="width:19%">Fixes approval delay</th><th style="width:9%">All 3 asks</th><th>Verdict</th></tr>
 <tr><td><b>A.</b> Build as asked: WhatsApp, UrbanMart custom, certificates</td><td>6</td><td>○ Same approval, new screen</td><td>●</td><td class="r">No: no buffer, three code paths</td></tr>
 <tr><td><b>B.</b> Hard-code certificates, overtime, a simple auto-approve*</td><td>5</td><td>◐ FreshBowl only</td><td>●</td><td class="r">No: each new ask costs a sprint</td></tr>
-<tr class="rec"><td><b>C.</b> Rules engine: credential, hours, training as settings</td><td>4 + 1</td><td>● Auto-approve eligible</td><td>●</td><td class="g">Recommended: keeps a buffer</td></tr>
+<tr class="rec"><td><b>C.</b> Rules engine: credential, hours, training as settings</td><td>4 + 1 rollout</td><td>● Auto-approve eligible</td><td>●</td><td class="g">Recommended: keeps a buffer</td></tr>
 <tr><td><b>D.</b> Certificate gate only, wait for estimates</td><td>1</td><td>○</td><td>○</td><td class="r">No: FreshBowl, UrbanMart wait</td></tr></table>
-<p class="small">*Auto-approve unestimated; I assume 2 sprints. Alongside C, Customer Success calls FitZone and Brew &amp; Co, which renew before anything ships.</p></div>
+<p class="small">● strong, ◐ partial, ○ weak. *Unestimated; I assume 2 sprints.</p></div>
 <h2><span>3</span> Plan: each release lands before the renewal it protects</h2>
 <table>
-<tr><th style="width:8%">Sprint</th><th style="width:46%">Ships</th><th style="width:15%">For</th><th>Exit check</th></tr>
-<tr><td><b>S1</b></td><td><b>Credential gate.</b> Required credentials per role, with expiry, checked against the shift date. Blocks scheduling; swaps into an expired certificate cannot be approved. Expiry alerts. Admin-only override, logged.</td><td>CarePoint</td><td>Live early Nov. Warn-only for 14 days, then enforced. CS loads their Excel.</td></tr>
-<tr><td><b>S2–3</b></td><td><b>Rules engine.</b> Credential and training checks, auto-approval, exception queue, decision log, eligibility shown to staff.</td><td>FreshBowl pilot (5–10 stores)</td><td>≥85% decided in 24 h (38% today). Hypothesis: about 80% auto-approved.</td></tr>
-<tr><td><b>S4</b></td><td><b>Hours-cap rule</b> with a designated approver, as a setting.</td><td>UrbanMart</td><td>Live by 11 Dec.</td></tr>
+<tr><th style="width:8%">Sprint</th><th style="width:46%">Ships</th><th style="width:15%">For</th><th>Success check</th></tr>
+<tr><td><b>S1</b></td><td><b>Credential gate.</b> Required credentials per role, with expiry, checked against the shift date. Blocks scheduling; swaps into an expired certificate cannot be approved. Expiry alerts. Admin-only override, logged.</td><td>CarePoint</td><td>Live early Nov. 14 days warn-only (flags, no block) while data loads, then enforced. CS loads their Excel.</td></tr>
+<tr><td><b>S2–3</b></td><td><b>Rules engine.</b> Credential and training checks, auto-approval, exception queue, decision log, eligibility shown to staff. <i>Estimate is mine, not Engineering's: about 2 sprints (range 1.5–3). At 3 the plan fits with no buffer.</i></td><td>FreshBowl pilot (5–10 stores)</td><td>≥85% decided in 24 h (38% today). Hypothesis: about 80% auto-approved.</td></tr>
+<tr><td><b>S4</b></td><td><b>Hours-cap rule.</b> A swap or extra shift that pushes someone past a weekly limit (UrbanMart: 48 h) goes to a designated approver. The limit is a setting.</td><td>UrbanMart</td><td>Live by 11 Dec.</td></tr>
 <tr><td><b>S5–6</b></td><td>Rollout, hardening, manager training. S6 is buffer, then the WhatsApp decision on pilot data.</td><td>All</td><td>No valid staff wrongly blocked.</td></tr></table>
-<img src="figs/fig2_renewals_vs_plan.png" style="width:62%">
-<div class="cap">Fig. 2. Delivery plan (2-week sprints from 19 Oct) against renewals. S5 ends 25 Dec; if the quarter closes 31 Dec, the buffer is what we lose.</div>
-<p class="small"><b>The engine estimate is mine, not Engineering's:</b> about 2 sprints (range 1.5 to 3), plus about 1 for the hours rule. At 3 the plan fits with no buffer; beyond that the hours rule ships as manager escalation.</p>
+<img src="figs/fig2_renewals_vs_plan.png" style="width:54%">
+<div class="cap">Fig. 2. Delivery plan against renewals. S5 ends 25 Dec; if the quarter closes 31 Dec, the buffer is what we lose.</div>
+
 
 <h3>Not building</h3>
 <ul class="small">
-<li><b>WhatsApp approvals (3 sprints).</b> Half of capacity to relocate the same approval. Message cost is small (about ₹0.5L a year for FreshBowl); the sprints are the cost. If FreshBowl makes it a renewal condition, a notification-only version on the engine comes next.</li>
+<li><b>WhatsApp approvals (3 sprints).</b> Half of capacity to relocate the same approval; message cost is small (₹0.5L a year for FreshBowl). If FreshBowl makes it a renewal condition, a notification-only version comes next.</li>
 <li><b>A custom UrbanMart build (2 sprints).</b> Single-customer code at about twice the cost of the same rule as a setting.</li>
-<li><b>A credential suite</b> (uploads, verification) or a regional hierarchy. One "approver" designation only.</li></ul>
+<li><b>A credential suite</b> (uploads, verification) or a regional hierarchy. We add one "approver" role instead.</li></ul>
 
 <h3>What we tell each account</h3>
 <table>
-<tr><td style="width:15%"><b>CarePoint</b></td><td>Credential block ships first, early November, for BLS and council registration. Send your credential list and name one Admin owner. This week, Customer Success runs an expiry check against your sheet.</td></tr>
-<tr><td><b>FreshBowl</b></td><td>Swaps that pass training and overtime checks are approved instantly; the rest reach the manager. Pilot from late November in stores you choose. WhatsApp is reviewed after the pilot, with real numbers.</td></tr>
-<tr><td><b>UrbanMart</b></td><td>The 48-hour rule arrives as a setting, targeted 11 December once Engineering confirms. We call your VP this week to agree the week boundary and approvers.</td></tr>
-<tr><td><b>FitZone, Brew &amp; Co</b></td><td>Renewals come first. Customer Success calls this week with a place in the pilot. Any commercial offer is your call.</td></tr></table>
-<p class="small"><b>Measures</b> North star: % of swaps decided in 24 h. Drivers: share auto-approved. Guardrails: valid staff wrongly blocked, overrides, wrong approvals. Outcome: renewals, overtime share of wage bill. <b>Risks</b> FreshBowl renews on a WhatsApp checklist; bad credential data blocks valid staff; the engine runs past 3 sprints. Mitigations are in the supporting analysis (A4).</p>
+<tr><td style="width:15%"><b>CarePoint</b></td><td>Credential block ships early November for BLS and council registration. Send your credential list and name an Admin owner. This week, CS checks expiry dates against your sheet.</td></tr>
+<tr><td><b>FreshBowl</b></td><td>Swaps that pass training and overtime checks are approved instantly; the rest reach the manager. Pilot from late November in stores you choose; WhatsApp is reviewed afterwards, with real numbers.</td></tr>
+<tr><td><b>UrbanMart</b></td><td>The 48-hour rule arrives as a setting, targeted 11 December once Engineering confirms. We call your VP this week to agree the work week and the approvers.</td></tr>
+<tr><td><b>Other accounts</b></td><td>Spice Route, MedAxis, QuickKart get the engine at rollout (S5). Spice Route (on watch) joins the second pilot wave; MedAxis benefits from the credential gate.</td></tr>
+<tr><td><b>FitZone, Brew &amp; Co</b></td><td>Renewals come first: CS calls this week, with a place in the pilot. Any commercial offer is your call.</td></tr></table>
+<p class="small"><b>How we will know it works.</b> North star: % of swaps decided in 24 h. Guardrails: valid staff wrongly blocked, overrides, wrong approvals. <b>Main risks.</b> FreshBowl renews on a WhatsApp checklist; bad credential data blocks valid staff; the engine runs past 3 sprints (mitigations in A4).</p>
 
 <!-- ============ PAGE 3 ============ -->
 <div class="pb"></div>
@@ -100,7 +102,7 @@ img{display:block;margin:0 auto}
 <div class="meta">Deliverable 2 · <span id="wc-reply"></span> words</div>
 <div id="reply">
 <p>The stakes are real: UrbanMart is 27% of ARR and RotaPro is a credible competitor.</p>
-<p>The data points elsewhere. GreenLeaf's former head of operations told us it wasn't WhatsApp: managers couldn't keep up with approvals, and RotaPro auto-approved trained staff. Three of four accounts we lost were at 22–33% on 24-hour approvals; our four weakest today sit at 29–41%. WhatsApp costs three of our six sprints and leaves that unchanged.</p>
+<p>The data points elsewhere. GreenLeaf's former head of operations told us it wasn't WhatsApp: managers couldn't keep up with approvals, and RotaPro auto-approved trained staff. Three of four accounts we lost were at 22–33% on 24-hour approvals; our four weakest today sit at 29–41%. WhatsApp costs three of our six sprints and leaves the approval delay unchanged.</p>
 <p>So we build one rules engine. UrbanMart's 48-hour rule becomes a setting, not a custom build, targeted for 11 December with half the effort. Their contract runs to August 2027, leaving eight months of proof before renewal. That is delivery this quarter, not a no.</p>
 <p>Certificates aren't only a clinic issue. CarePoint's ₹60L renews in December after an audit finding, and the gate is one sprint. Diagnostics and gyms likely do too.</p>
 <p>Two asks. Treat UrbanMart's "look at options" as a real threat to leave: join me on a call with their VP this week. We show how the 48-hour overtime rule ships by 11 December, and get their regional approvers' names. And join me on the FreshBowl call: auto-approval first, WhatsApp reviewed after the pilot.</p>
@@ -123,6 +125,9 @@ img{display:block;margin:0 auto}
 <li><b>Certificates beyond clinics</b> (diagnostics, gyms, some restaurant roles) are an inference. Clinics and diagnostics are ₹90L, 22% of ARR on 10% of locations.</li>
 <li><b>UrbanMart threat.</b> "Look at options" is read as a threat to cancel and move to another app, as relayed in the Sales memo. I assume an annual contract committed to August 2027, so the leverage is at renewal. No customer was contacted.</li>
 <li><b>Churn evidence.</b> Sales-recorded loss reasons are unverified; only GreenLeaf has a first-hand exit call.</li>
+<li><b>Renewals before release.</b> FitZone (Oct) and Brew &amp; Co (Nov) renew before anything ships, so they are handled by Customer Success, not product.</li>
+<li><b>Pricing.</b> No price change or upsell is assumed; the engine is part of the core product.</li>
+<li><b>Prototype scope.</b> It checks only the person taking a shift; production checks both sides of a swap.</li>
 <li><b>Churn base.</b> Opening ARR is ₹408L plus ₹80L lost, so about 16% gross churn, ignoring new logos.</li>
 </ul>
 
@@ -131,7 +136,7 @@ img{display:block;margin:0 auto}
 <h1>Build note</h1>
 <div class="meta">Deliverable 4 · <span id="wc-build"></span> words</div>
 <div id="build">
-<p>The prototype is a single-file web app with no backend. It shows the new experience for four roles: staff and location manager on mobile, a regional approver, and Admin on the web. Pick FreshBowl, CarePoint or UrbanMart and follow a guided walkthrough: staff see who can take a shift before asking, the rules engine decides, and the right person is told. Managers see only exceptions. Admin edits rules, previews the effect on past requests, publishes, and overrides blocks with a logged reason. A release switch shows the product as of Sprint 1, 2–3 and 4+. A handoff tab holds the decision table, data model and open questions.</p>
+<p>The prototype is a single-file web app with no backend. It shows the new experience for four roles: staff and location manager on mobile, a regional approver, and Admin on the web. Pick FreshBowl, CarePoint or UrbanMart and follow a guided walkthrough: staff see who can take a shift before asking, the rules engine decides, and the right person is told. Managers see only exceptions. Admin edits rules, previews the effect on past requests, publishes, and overrides blocks with a logged reason. A release switch shows the product as of Sprint 1, 2–3 and 4+. A handoff tab holds the decision table, data model and open questions. It is plain HTML, CSS and JavaScript in one file, hosted on GitHub Pages; the rules engine is a single function.</p>
 <p>AI: several tools, including ChatGPT and Claude, were used to cross-check the analysis, logic and code, alongside my own thinking and drafting. Chat links can't be shared; I'm happy to walk through the process.</p>
 <p>A real version needs: a per-role credential model with expiry; versioned rules; weekly-hours logic (week boundary, leave, both sides of a swap); approver routing; decision and audit log; notifications; warn-only mode; feature flags and tests.</p>
 </div>
